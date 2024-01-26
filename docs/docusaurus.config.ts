@@ -7,7 +7,7 @@ const projectName = "onju-voice-satellite";
 
 const config: Config = {
   title: 'Onju Voice Satellite',
-  tagline: 'Dinosaurs are cool',
+  tagline: 'An ESPHome config for your Onju Voice PCB',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -61,14 +61,18 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'My Site',
+      title: 'Onju Voice Satellite',
       logo: {
-        alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        alt: 'Site Logo',
+        src: 'img/satellite-antenna.svg',
       },
       items: [
         {
           type: 'docSidebar',
+          sidebarId: 'docSidebar',
+          position: 'left',
+          label: 'Get Started',
+        },
         {
           type: 'docSidebar',
           sidebarId: 'faqSidebar',
@@ -90,18 +94,14 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
-              to: '/docs/intro',
+              label: 'Getting Started',
+              to: '/docs/getting-started',
             },
           ],
         },
         {
           title: 'Community',
           items: [
-            {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
             {
               label: 'Discord',
               href: 'https://discordapp.com/invite/docusaurus',
