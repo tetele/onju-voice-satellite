@@ -8,7 +8,7 @@ Ever since voice satellites [were introduced](https://www.home-assistant.io/blog
 
 The purpose of this project is to be able to use such a modded Nest Mini as a voice satellite in Home Assistant. Here's a small demo:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/fuX6IYa79gA?si=DAuEWS87kSnQtX6U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe class="youtube-video" src="https://www.youtube.com/embed/fuX6IYa79gA?si=DAuEWS87kSnQtX6U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Features
 
