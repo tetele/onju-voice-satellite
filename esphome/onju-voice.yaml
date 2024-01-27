@@ -1,19 +1,18 @@
+---
 substitutions:
   name: "onju-voice"
   friendly_name: "Onju Voice"
-  wifi_ap_password: ""
-
-dashboard_import:
-  package_import_url: github://tetele/onju-voice-satellite/esphome/onju-voice.yaml
-  import_full_config: false
+  project_version: "1.0.0"
+  device_description: "Onju Voice Satellite with ESPHome software"
 
 esphome:
-  name: ${name}
+  name: '${name}'
+  comment: '${device_description}'
   friendly_name: ${friendly_name}
   name_add_mac_suffix: true
   project:
     name: tetele.onju_voice_satellite
-    version: "1.0"
+    version: '${project_version}'
   min_version: 2023.11.6
   on_boot:
     then:
@@ -44,12 +43,32 @@ esphome:
       - delay: 1s
       - script.execute: reset_led
 
+dashboard_import:
+  package_import_url: github://tetele/onju-voice-satellite/esphome/onju-voice.yaml@main
+  import_full_config: false
+
 esp32:
   board: esp32-s3-devkitc-1
   framework:
     type: arduino
 
+# Enable logging
 logger:
+
+# Allow OTA updates
+ota:
+
+# Allow provisioning Wi-Fi via serial
+improv_serial:
+
+wifi:
+  # Set up a wifi access point
+  ap:
+    ssid: "Onju Voice Satellite"
+
+# In combination with the `ap` this allows the user
+# to provision wifi credentials to the device via WiFi AP.
+captive_portal:
 
 api:
   services:
@@ -59,14 +78,6 @@ api:
     - service: stop_va
       then:
         - voice_assistant.stop
-
-ota:
-
-wifi:
-  ap:
-    password: "${wifi_ap_password}"
-
-captive_portal:
 
 globals:
   - id: thresh_percent
