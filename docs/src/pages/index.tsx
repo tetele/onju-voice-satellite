@@ -32,7 +32,7 @@ export default function Home(): JSX.Element {
   return (
     <Layout
       title={`Home`}
-      description="Description will go into a meta tag in <head />">
+      description="An ESPHome config for the Onju Voice PCB to transform your Google Nest Mini to a Home Assistant Voice Satellite">
       <HomepageHeader />
       <main>
         <HomepageFeatures />
