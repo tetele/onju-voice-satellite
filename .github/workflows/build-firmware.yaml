@@ -86,8 +86,8 @@ jobs:
         uses: esphome/build-action@v1.8.0
         id: esphome-build
         with:
-          yaml_file: ${{ matrix.firmware.file }}
-          version: latest
+          yaml_file: ${{ matrix.firmware }}/${{ matrix.device }}.yaml
+          version: ${{ matrix.version || 'latest' }}
       - name: 🚚 Move generated files to output
         run: |
           mkdir -p output/${{ matrix.device }}
