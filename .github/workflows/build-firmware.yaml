@@ -149,9 +149,8 @@ jobs:
         run: ls -R
       - name: 🗂️ Move firmware folders to static
         run: |
-          cd repository
-          for firmware in repository/*; do
-            mv $firmware docs/static
+          for firmware in repository/*/; do
+            mv "$firmware"* docs/static
           done
           rm -R ./repository
 
