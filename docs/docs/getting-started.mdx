@@ -28,11 +28,16 @@ _Make sure this page is opened in a Chromium-based browser on a desktop. The sof
 3. In the pop-up window, there should now appear a new entry. Select this USB serial port and click **Connect**.
 4. Select **Install Onju Voice Satellite**, then **Install**.
 5. Once the installation is complete, select **Next**.
+    - Since it's still in BOOT mode, you will be returned to an earlier pop-up window.
+6. Press the `RST` button on the Onju Voice PCB to reboot the device.
+7. Refresh your browser and repeat step 1 and 3 to connect to the device again.
+8. In the pop-up window, select **Connect to Wi-Fi**.
     - Add the Onju Voice Satellite to your Wi-Fi network:
       - When prompted, select your network from the list and enter the credentials to your 2.4&nbsp;GHz Wi-Fi network.
       - Select **Connect**.
       - The Onju Voice Satellite now joined your network.
-6. Congratulations 🎉 You have successfully installed the firmware on your Onju Voice Satellite.
+    - _Note_: if you wait to long the option to connect to Wi-Fi will disappear. In that case, repeat step 6 - 8.
+9. Congratulations 🎉 You have successfully installed the firmware on your Onju Voice Satellite.
 
 :::note
 If your device does not appear in the list, make sure you are using a USB data cable (i.e., not power-only), and try installing the [driver](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads) for the serial chip.
