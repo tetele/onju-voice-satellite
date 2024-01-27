@@ -119,14 +119,15 @@ jobs:
           pattern: ${{ matrix.project }}-*
           merge-multiple: true
           path: project-build
+      - name: 🧪 Display structure of job
+        run: ls -R
       - name: 🔨 Generate device manifest.json
         run: |
           cd project-build
           for device in */; do
-            mkdir -p ../output/$device
             pushd $device
             version=$(cat version)
-            jq --arg version "$version" '{"name": "${{ matrix.name }}", "version": $version, "home_assistant_domain": "esphome", "builds":[.]}' manifest.json > ../../project-build/$device/manifest.json
+            jq --arg version "$version" '{"name": "${{ matrix.name }}", "version": $version, "home_assistant_domain": "esphome", "builds":[.]}' manifest.json > manifest.json
             popd
           done
       - name: 🧪 Display structure of job
@@ -145,18 +146,18 @@ jobs:
   #   steps:
   #     - name: ⤵️ Check out code from GitHub
   #       uses: actions/checkout@v4.1.1
-      # - name: ⬇️ Download all artifacts
-      #   uses: actions/download-artifact@v4.1.1
-      #   with:
-      #     path: repository
-      # - name: 🗂️ Move firmware folders to static
-      #   run: |
-      #     for firmware in $FIRMWARES; do
-      #       mv repository/$firmware docs/static
-      #     done
-      #     rm -R repository
-      # - name: 🧪 Display structure of job
-      #   run: ls -R
+  #     - name: ⬇️ Download all artifacts
+  #       uses: actions/download-artifact@v4.1.1
+  #       with:
+  #         path: repository
+  #     - name: 🧪 Display structure of job
+  #       run: ls -R
+  #     - name: 🗂️ Move firmware folders to static
+  #       run: |
+  #         for firmware in $FIRMWARES; do
+  #           mv repository/$firmware docs/static
+  #         done
+  #         rm -R repository
 
       # - name: 🏗️ Set up Node.js
       #   uses: actions/setup-node@v4.0.1
