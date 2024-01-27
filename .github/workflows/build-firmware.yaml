@@ -149,10 +149,11 @@ jobs:
         run: ls -R
       - name: 🗂️ Move firmware folders to static
         run: |
-          for firmware in repository; do
-            mv repository/$firmware docs/static
+          cd repository
+          for firmware in repository/*; do
+            mv $firmware docs/static
           done
-          rm -R repository
+          rm -R ./repository
 
       - name: 🏗️ Set up Node.js
         uses: actions/setup-node@v4.0.1
