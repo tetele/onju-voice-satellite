@@ -116,7 +116,7 @@ jobs:
       - name: ⤵️ Download specific artifacts
         uses: actions/download-artifact@v4.1.1
         with:
-          name: ${{ matrix.project }}-*
+          pattern: ${{ matrix.project }}-*
           merge-multiple: true
           path: project-build
       - name: 🔨 Generate device manifest.json
