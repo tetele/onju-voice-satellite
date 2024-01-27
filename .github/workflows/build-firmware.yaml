@@ -22,8 +22,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FIRMWARES: |
-    esphome
+  FIRMWARES: esphome
 
 jobs:
   prepare:
@@ -73,7 +72,7 @@ jobs:
           echo matrix=$matrix >> $GITHUB_OUTPUT
 
   build:
-    name: ${{ matrix.firmware }} / ${{ matrix.device }}
+    name: ${{ matrix.device }}
     runs-on: ubuntu-latest
     needs: prepare
     strategy:
@@ -95,11 +94,11 @@ jobs:
           echo ${{ steps.esphome-build.outputs.version }} > output/${{ matrix.device }}/version
       - name: 🔨 Alter path in manifest.json
         run: |
-          sed -i 's/${{ steps.esphome-build.outputs.name }}\//\/${{ matrix.firmware }}\/${{ matrix.device }}\//g' output/${{ matrix.device }}/manifest.json
+          sed -i 's/${{ steps.esphome-build.outputs.name }}\//\/${{ matrix.device }}\//g' output/${{ matrix.device }}/manifest.json
       - name: ⬆️ Upload firmware / device artifact
         uses: actions/upload-artifact@v4.3.0
         with:
-          name: ${{ matrix.firmware}}-${{ matrix.device }}
+          name: ${{ matrix.device }}
           path: output
 
   full-manifests:
@@ -110,33 +109,32 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - project: esphome
-            name: ESPHome
+          - project: onju-voice
+            name: Onju Voice Satellite
     steps:
       - name: ⤵️ Download specific artifacts
         uses: actions/download-artifact@v4.1.1
         with:
-          pattern: ${{ matrix.project }}-*
-          merge-multiple: true
+          name: ${{ matrix.project }}
           path: project-build
       - name: 🧪 Display structure of job
-        run: ls -R
+        run: |
+          cat project-build/*/manifest.json
+          ls -R
       - name: 🔨 Generate device manifest.json
         run: |
-          cd project-build
-          for device in */; do
-            pushd $device
-            version=$(cat version)
-            jq --arg version "$version" '{"name": "${{ matrix.name }}", "version": $version, "home_assistant_domain": "esphome", "builds":[.]}' manifest.json > manifest.json
-            popd
-          done
+          version=$(cat project-build/*/version | sort -V | tail -n 1)
+          jq --arg version "$version" '{"name": "${{ matrix.name }}", "version": $version, "home_assistant_domain": "esphome", "new_install_skip_erase": false, "builds":[.]}' project-build/*/manifest.json > temp.json && mv temp.json project-build/*/manifest.json
       - name: 🧪 Display structure of job
-        run: ls -R
+        run: |
+          cat project-build/*/manifest.json
+          ls -R
       - name: ⬆️ Upload project artifact
         uses: actions/upload-artifact@v4.3.0
         with:
           name: ${{ matrix.project }}
           path: project-build
+          overwrite: true
 
   # build-docs:
   #   name: Build documentation website
