@@ -134,6 +134,17 @@ const config: Config = {
       darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
+
+  plugins: [
+    [
+      require.resolve("@easyops-cn/docusaurus-search-local"),
+      {
+        hashed: true,
+        removeDefaultStopWordFilter: true,
+        indexPages: true,
+      },
+    ]
+  ]
 };
 
 export default config;
