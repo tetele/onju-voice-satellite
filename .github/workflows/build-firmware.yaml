@@ -147,28 +147,28 @@ jobs:
           path: repository
       - name: 🧪 Display structure of job
         run: ls -R
-      # - name: 🗂️ Move firmware folders to static
-      #   run: |
-      #     for firmware in $FIRMWARES; do
-      #       mv repository/$firmware docs/static
-      #     done
-      #     rm -R repository
+      - name: 🗂️ Move firmware folders to static
+        run: |
+          for firmware in repository; do
+            mv repository/$firmware docs/static
+          done
+          rm -R repository
 
-      # - name: 🏗️ Set up Node.js
-      #   uses: actions/setup-node@v4.0.1
-      #   with:
-      #     node-version: 20.x
-      # - name: 🏗️ Install Docusaurus dependencies
-      #   run: npm install --frozen-lockfile --non-interactive
-      #   working-directory: docs
-      # - name: 🚀 Build Docusaurus
-      #   run: npm run build
-      #   working-directory: docs
+      - name: 🏗️ Set up Node.js
+        uses: actions/setup-node@v4.0.1
+        with:
+          node-version: 20.x
+      - name: 🏗️ Install Docusaurus dependencies
+        run: npm install --frozen-lockfile --non-interactive
+        working-directory: docs
+      - name: 🚀 Build Docusaurus
+        run: npm run build
+        working-directory: docs
 
-      # - name: ⬆️ Upload pages artifacts
-      #   uses: actions/upload-pages-artifact@v3
-      #   with:
-      #     path: docs/build
+      - name: ⬆️ Upload pages artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/build
 
   # deploy:
   #   name: Deploy to GitHub Pages
