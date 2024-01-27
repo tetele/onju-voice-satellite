@@ -1,0 +1,55 @@
+---
+id: getting-started
+title: Getting Started
+description: 'Instructions how to get started with the Onju Voice Satellite'
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import EspInstallButton from '@site/src/components/EspInstallButton';
+import { faUsb } from '@fortawesome/free-brands-svg-icons';
+
+# Get started
+
+This page will guide you through setting up your new Onju Voice PCB with ESPHome. It will take you through the steps of replacing the PCB in the Google Nest mini, installing the firmware and configure the device. It should take 15-20 minutes, but probably less.
+
+## Step 1: Install firmware
+
+Use the method below to provide your Onju Voice PCB with the correct firmware.
+
+<Tabs>
+  <TabItem value="usb" label={<><icon icon={faUsb} size="lg"/> USB</>}>
+
+_Make sure this page is opened in a Chromium-based browser on a desktop. The software installation does not work with a tablet or phone._
+
+1. Press the blue **connect** button below, a pop-up window will appear with a list of available USB devices.
+2. Hold down the `BOOT` button on the Onju Voice PCB and connect a USB cable to your computer.
+3. In the pop-up window, there should now appear a new entry. Select this USB serial port and click **Connect**.
+4. Select **Install Onju Voice Satellite**, then **Install**.
+5. Once the installation is complete, select **Next**.
+    - Add the Onju Voice Satellite to your Wi-Fi network:
+      - When prompted, select your network from the list and enter the credentials to your 2.4&nbsp;GHz Wi-Fi network.
+      - Select **Connect**.
+      - The Onju Voice Satellite now joined your network.
+6. Congratulations 🎉 You have successfully installed the firmware on your Onju Voice Satellite.
+
+:::note
+If your device does not appear in the list, make sure you are using a USB data cable (i.e., not power-only), and try installing the [driver](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads) for the serial chip.
+:::
+
+<EspInstallButton unsupportedMessage="Provisioning via USB only works in browsers which support Web Serial, such as Chrome or Edge." />
+  </TabItem>
+</Tabs>
+
+## Step 2: Replace PCB in Google Nest Mini
+
+- How to replace the PCB
+
+## Step 3: Connect to Home Assistant
+
+- During firmware installation
+- Auto discovery
+
+## Step 4: Talk to your voice assistant
+
+Congratulations 🎉 You have gone successfully through everything to get started with the Onju Voice for Home Assistant. If you have any questions, please check the [FAQ page] first and if you can't find the answer there, you can always ask your question on [Github].
