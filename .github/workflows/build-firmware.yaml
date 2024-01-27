@@ -34,24 +34,24 @@ jobs:
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v4.1.1
-      - name: ⤵️ Get changed files
-        id: changes
-        uses: masesgroup/retrieve-changed-files@v3
-        if: github.event_name == 'pull_request'
+      # - name: ⤵️ Get changed files
+      #   uses: masesgroup/retrieve-changed-files@v3
+      #   if: github.event_name == 'pull_request'
+      #   id: changes
       - name: 🚧 Prepare matrix
         id: prepare-matrix
         run: |-
           # Set variables
           matrix=""
-          fullRun=$(! [[ "${{ github.event_name }}" != "pull_request" || "${{ steps.changes.outputs.modified }}" == *".github/workflows/build-firmware.yaml"* ]]; echo $?)
+          # fullRun=$(! [[ "${{ github.event_name }}" != "pull_request" || "${{ steps.changes.outputs.modified }}" == *".github/workflows/build-firmware.yaml"* ]]; echo $?)
 
           # Iterate through firmwares and devices
           for firmware in $FIRMWARES; do
             for device in $firmware/*.yaml; do
               # If pull_request event type and changed files do not contain the device, skip it
-              if [[ $fullRun -eq 0 && "${{ steps.changes.outputs.added_modified }}" != *"${device}"* ]]; then
-                continue
-              fi
+              # if [[ $fullRun -eq 0 && "${{ steps.changes.outputs.added_modified }}" != *"${device}"* ]]; then
+              #   continue
+              # fi
 
               # Extract device name from file path
               device=${device##*/}
