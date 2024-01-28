@@ -23,16 +23,22 @@ Use the method below to provide your Onju Voice PCB with the correct firmware.
 _Make sure this page is opened in a Chromium-based browser on a desktop. The software installation does not work with a tablet or phone._
 
 1. Press the blue **connect** button below, a pop-up window will appear with a list of available USB devices.
-2. Plug the USB cable into the Onju Voice PCB and connect it to your computer.
-3. In the pop-up window, there should now appear a new entry. Select this USB serial port and click **Connect**.
-4. Select **Install Onju Voice Satellite**, hold down the `BOOT` button on the Onju Voice PCB and click **Install**.
-5. Once the installation is complete, select **Next**.
+2. Hold down the `BOOT` button on the Onju Voice PCB ans connect a USB cable.
+    - _Note_: this prevents the device from reconnecting repeatedly.
+3. In the pop-up window, a new entry should appear. Select this USB serial port and click **Connect**.
+4. Choose **Install Onju Voice Satellite**, then click **Install**.
+5. After installation, select **Next**.
+    - _Note_: since the device is still in BOOT mode, you'll return to a previous pop-up window.
+6. Press the `RST` button on the Onju Voice PCB to reboot the device.
+7. Refresh the browser page, and repeat steps 1 and 3 to reconnect to the device.
+8. In the pop-up window, choose **Connect to Wi-Fi**.
     - Add the Onju Voice Satellite to your Wi-Fi network:
-      - When prompted, select your network from the list and enter the credentials to your 2.4&nbsp;GHz Wi-Fi network.
-      - Select **Connect**.
-      - The Onju Voice Satellite now joined your network.
-6. Congratulations 🎉 You have successfully installed the firmware on your Onju Voice Satellite.
-    - The LED's on the Onju Voice PCB should now be blinking green.
+      - Select your network from the list and enter the credentials for your 2.4 GHz Wi-Fi network.
+      - Click **Connect**.
+      - The Onju Voice Satellite is now connected to your network.
+    - _note_: If you wait to long, the option to connect to Wi-Fi disappears. In that case, repeat step 6 - 8.
+9. Congratulations 🎉 You have successfully installed the firmware on your Onju Voice Satellite.
+    - The LEDs on the Onju Voice PCB should now be blinking green.
 
 :::note
 If your device does not appear in the list, make sure you are using a USB data cable (i.e., not power-only), and try installing the [driver](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads) for the serial chip.
