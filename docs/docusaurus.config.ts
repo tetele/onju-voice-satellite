@@ -83,8 +83,10 @@ const config: Config = {
         {to: '/blog', label: 'Blog', position: 'left'},
         {
           to: `https://github.com/${organizationName}/${projectName}`,
-          label: 'GitHub',
           position: 'right',
+          label: 'GitHub',
+          className: "navbar--github-link",
+          "aria-label": "GitHub repository",
         },
       ],
     },
