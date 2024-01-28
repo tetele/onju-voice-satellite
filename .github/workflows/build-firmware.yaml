@@ -70,10 +70,15 @@ jobs:
           matrix="{\"include\":[$matrix]}"
 
           # Output matrix to a file
+          echo $matrix
           echo matrix=$matrix >> $GITHUB_OUTPUT
+      - name: 🧪 Display generated matrix
+        run: |
+          echo "${{ steps.prepare-matrix.outputs.matrix }}"
 
   build:
     name: ${{ matrix.device }}
+    if: ${{ needs.prepare.outputs.matrix != '{"include":[]}' }}
     runs-on: ubuntu-latest
     needs: prepare
     strategy:
