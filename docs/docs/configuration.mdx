@@ -1,0 +1,33 @@
+---
+id: configuration
+title: Configuration
+description: Configuration options for the Onju Voice in Home Assistant.
+---
+
+## Renaming the Device
+
+By default, the name of your Onju Voice Satellite in Home Assistant is `onju-voice-satellite-XXXXXX`, where `XXXXXX`
+is derived from the MAC address of the device. This is not very descriptive, so you can change it to something more
+meaningful.
+
+In the Home Assistant UI, navigate to your Onju Voice Satellite by going to [**Settings** > **Devices & Services** > **ESPHome**][esphome-devices],
+then select your Onju Voice Satellite. You can also click the my badge below to go directly to your ESPHome devices overview page:
+
+[![Open your Home Assistant instance and show an integration.](https://my.home-assistant.io/badges/integration.svg)][esphome-devices]
+
+On the device's page, press the pencil icon in the top-right to edit the name.
+
+<p align="left">
+  <img src={require('@site/static/img/configuration/rename-device.png').default} />
+</p>
+
+After you've changed the name, click on **Update** to save the changes.
+
+:::info
+Home Assistant may ask if you want to rename the entity IDs as well. If you don't already have automations,
+dashboards, etc. using the entity IDs, it's probably a good idea to do that now so the entity IDs are more
+readable. But if you already are using the entity IDs in other places, you can opt not to rename them, and
+just change the name of the device.
+:::
+
+[esphome-devices]: https://my.home-assistant.io/redirect/integration/?domain=esphome
