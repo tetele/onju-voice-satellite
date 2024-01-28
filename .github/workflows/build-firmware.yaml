@@ -74,7 +74,7 @@ jobs:
           echo matrix=$matrix >> $GITHUB_OUTPUT
       - name: 🧪 Display generated matrix
         run: |
-          echo "${{ fromJson(steps.prepare-matrix.outputs.matrix) }}"
+          echo "${{ steps.prepare-matrix.outputs.matrix }}"
 
   build:
     name: ${{ matrix.device }}
