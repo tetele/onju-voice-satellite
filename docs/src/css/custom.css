@@ -29,6 +29,8 @@
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
 
+@import "navbar.css";
+
 .tabs__item {
   align-items: center;
   gap: 7px;

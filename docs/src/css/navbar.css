@@ -1,0 +1,41 @@
+.navbar__item.navbar__link[href*="github"] {
+  position: relative;
+  padding: 0 1.5rem 0 0;
+  display: flex;
+  font-size: 0;
+}
+
+.navbar__item.navbar__link[href*="github"]:before {
+  content: "";
+  width: 1.5rem;
+  height: 1.5rem;
+  background-image: url("/img/brand-github.svg");
+  background-repeat: no-repeat;
+}
+
+html[data-theme="dark"] .navbar__item.navbar__link[href*="github"]:before {
+  background-image: url("/img/brand-github-inverted.svg");
+}
+
+@media screen and (max-width: 966px) {
+  .navbar__item.navbar__link[href*="github"] {
+    display: none;
+  }
+}
+
+.github-counter {
+  position: absolute;
+  color: #000;
+  top: -10px;
+  right: 4px;
+  font-size: 9px;
+  background-color: #ccc;
+  padding: 2px 5px;
+  border-radius: 10px;
+  z-index: -1;
+}
+
+html[data-theme="dark"] .github-counter {
+  background-color: #222;
+  color: #fff;
+}

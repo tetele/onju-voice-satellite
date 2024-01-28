@@ -6,6 +6,11 @@ import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import Heading from '@theme/Heading';
 
 import styles from './index.module.css';
+// import { useEffect } from 'react';
+
+// const kFormatter = (num) => {
+//   return Math.sign(num) * (Math.abs(num) / 1000).toFixed(1) + "k"
+// }
 
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
@@ -29,6 +34,21 @@ function HomepageHeader() {
 }
 
 export default function Home(): JSX.Element {
+  // useEffect(() => {
+  //   window
+  //     .fetch("https://api.github.com/repos/tetele/onju-voice-satellite")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       const githubLink = document.querySelector(
+  //         ".navbar__item.navbar__link[href*='github']"
+  //       )
+  //       const githubStat = document.createElement("span")
+  //       githubStat.innerHTML = data.stargazers_count
+  //       githubStat.className = "github-counter"
+  //       githubLink.appendChild(githubStat)
+  //     })
+  // }, [])
+
   return (
     <Layout
       title={`Home`}
