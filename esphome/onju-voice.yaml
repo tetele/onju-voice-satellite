@@ -1,14 +1,13 @@
 ---
 substitutions:
   name: "onju-voice"
-  friendly_name: "Onju Voice"
+  friendly_name: "Onju Voice Satellite"
   project_version: "1.0.0"
   device_description: "Onju Voice Satellite with ESPHome software"
 
 esphome:
   name: '${name}'
   comment: '${device_description}'
-  friendly_name: ${friendly_name}
   name_add_mac_suffix: true
   project:
     name: tetele.onju_voice_satellite
@@ -45,7 +44,6 @@ esphome:
 
 dashboard_import:
   package_import_url: github://tetele/onju-voice-satellite/esphome/onju-voice.yaml@main
-  import_full_config: false
 
 esp32:
   board: esp32-s3-devkitc-1
@@ -64,7 +62,7 @@ improv_serial:
 wifi:
   # Set up a wifi access point
   ap:
-    ssid: "Onju Voice Satellite"
+    ssid: '${friendly_name}'
 
 # In combination with the `ap` this allows the user
 # to provision wifi credentials to the device via WiFi AP.
