@@ -44,7 +44,6 @@ esphome:
 
 dashboard_import:
   package_import_url: github://tetele/onju-voice-satellite/esphome/onju-voice.yaml@main
-  import_full_config: false
 
 esp32:
   board: esp32-s3-devkitc-1
