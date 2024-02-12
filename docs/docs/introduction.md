@@ -21,7 +21,7 @@ The purpose of this project is to be able to use such a modded Nest Mini as a vo
 - Uses the original Mini's microphone mute button to prevent the wake word engine from starting unintendedly
 - Automatic continuous touch control calibration
 
-## Pre-requisites
+## Prerequisites
 
 - Home Assistant 2023.11.3 or newer
 - A voice assistant [configured in HA](https://my.home-assistant.io/redirect/voice_assistants/) with STT and TTS in a language of your choice
