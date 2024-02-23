@@ -2,7 +2,7 @@ substitutions:
   name: "onju-voice"
   friendly_name: "Onju Voice Satellite"
   project_version: "1.0.0"
-  device_description: "Onju Voice Satellite with ESPHome software"
+  device_description: "Onju Voice Satellite with ESPHome software and microWakeWord"
 
 esphome:
   name: '${name}'
@@ -11,7 +11,10 @@ esphome:
   project:
     name: tetele.onju_voice_satellite
     version: '${project_version}'
-  min_version: 2023.11.6
+  min_version: 2024.2.0
+  platformio_options:
+    build_flags: "-DBOARD_HAS_PSRAM"
+    board_build.arduino.memory_type: qio_opi
   on_boot:
     then:
       - light.turn_on:
@@ -47,7 +50,13 @@ dashboard_import:
 esp32:
   board: esp32-s3-devkitc-1
   framework:
-    type: arduino
+    type: esp-idf
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+
 
 # Enable logging
 logger:
@@ -108,16 +117,18 @@ i2s_audio:
   - i2s_lrclk_pin: GPIO13
     i2s_bclk_pin: GPIO18
 
-media_player:
+micro_wake_word:
+  model: okay_nabu
+  on_wake_word_detected:
+    then:
+      - voice_assistant.start
+
+speaker:
   - platform: i2s_audio
-    name: None
     id: onju_out
     dac_type: external
     i2s_dout_pin: GPIO12
-    mode: mono
-    mute_pin:
-      number: GPIO21
-      inverted: True
+    mode: stereo
 
 microphone:
   - platform: i2s_audio
@@ -129,8 +140,8 @@ microphone:
 voice_assistant:
   id: va
   microphone: onju_microphone
-  media_player: onju_out
-  use_wake_word: true
+  speaker: onju_out
+  use_wake_word: false
   on_listening:
     - light.turn_on:
         id: top_led
@@ -148,7 +159,6 @@ voice_assistant:
         brightness: 70%
         effect: processing
   on_tts_end:
-    - media_player.play_media: !lambda return x;
     - light.turn_on:
         id: top_led
         blue: 0%
@@ -156,11 +166,19 @@ voice_assistant:
         green: 100%
         effect: speaking
   on_end:
-    - delay: 100ms
+    - delay: 500ms
     - wait_until:
         not:
-          media_player.is_playing: onju_out
+          speaker.is_playing: onju_out
     - script.execute: reset_led
+    - if:
+        condition:
+          and:
+            - switch.is_on: use_wake_word
+            - binary_sensor.is_off: mute_switch
+        then:
+          - delay: 200ms
+          - micro_wake_word.start
   on_client_connected:
     - if:
         condition:
@@ -168,7 +186,7 @@ voice_assistant:
             - switch.is_on: use_wake_word
             - binary_sensor.is_off: mute_switch
         then:
-          - voice_assistant.start_continuous:
+          - micro_wake_word.start:
   on_client_disconnected:
     - if:
         condition:
@@ -177,6 +195,7 @@ voice_assistant:
             - binary_sensor.is_off: mute_switch
         then:
           - voice_assistant.stop:
+          - micro_wake_word.stop:
   on_error:
     - light.turn_on:
         id: top_led
@@ -205,7 +224,7 @@ number:
 
 esp32_touch:
   setup_mode: false
-  sleep_duration: 2ms 
+  sleep_duration: 2ms
   measurement_duration: 800us
   low_voltage_reference: 0.8V
   high_voltage_reference: 2.4V
@@ -224,47 +243,11 @@ binary_sensor:
     id: volume_down
     pin: GPIO4
     threshold: 539000
-    on_press:
-      then:
-        - light.turn_on: left_led
-        - script.execute:
-            id: set_volume
-            volume: -0.05
-        - delay: 750ms
-        - while:
-            condition:
-              binary_sensor.is_on: volume_down
-            then:
-              - script.execute:
-                  id: set_volume
-                  volume: -0.05
-              - delay: 150ms
-    on_release:
-      then:
-        - light.turn_off: left_led
 
   - platform: esp32_touch
     id: volume_up
     pin: GPIO2
     threshold: 580000
-    on_press:
-      then:
-        - light.turn_on: right_led
-        - script.execute:
-            id: set_volume
-            volume: 0.05
-        - delay: 750ms
-        - while:
-            condition:
-              binary_sensor.is_on: volume_up
-            then:
-              - script.execute:
-                  id: set_volume
-                  volume: 0.05
-              - delay: 150ms
-    on_release:
-      then:
-        - light.turn_off: right_led
 
   - platform: esp32_touch
     id: action
@@ -282,9 +265,9 @@ binary_sensor:
                 format: "Voice assistant is running: %s"
                 args: ['id(va).is_running() ? "yes" : "no"']
             - if:
-                condition: media_player.is_playing
+                condition: speaker.is_playing
                 then:
-                  - media_player.stop
+                  - speaker.stop
             - if:
                 condition: voice_assistant.is_running
                 then:
@@ -296,9 +279,9 @@ binary_sensor:
                 tag: "action_click"
                 format: "Voice assistant was running with wake word detection enabled. Starting continuously"
             - if:
-                condition: media_player.is_playing
+                condition: speaker.is_playing
                 then:
-                  - media_player.stop
+                  - speaker.stop
             - voice_assistant.stop
             - delay: 1s
             - script.execute: reset_led
@@ -349,23 +332,6 @@ light:
           name: slow_pulse
           transition_length: 1s
           update_interval: 2s
-      - addressable_lambda:
-          name: show_volume
-          update_interval: 50ms
-          lambda: |-
-            int int_volume = int(id(onju_out).volume * 100.0f * it.size());
-            int full_leds = int_volume / 100;
-            int last_brightness = int_volume % 100;
-            int i = 0;
-            for(; i < full_leds; i++) {
-              it[i] = Color::WHITE;
-            }
-            if(i < 4) {
-              it[i++] = Color(64, 64, 64).fade_to_white(last_brightness*256/100);
-            }
-            for(; i < it.size(); i++) {
-              it[i] = Color(64, 64, 64);
-            }
       - addressable_twinkle:
           name: listening_ww
           twinkle_probability: 1%
@@ -405,20 +371,6 @@ script:
           else:
             - light.turn_off: top_led
 
-  - id: set_volume
-    mode: restart
-    parameters:
-      volume: float
-    then:
-      - media_player.volume_set:
-          id: onju_out
-          volume: !lambda return clamp(id(onju_out).volume+volume, 0.0f, 1.0f);
-      - light.turn_on:
-          id: top_led
-          effect: show_volume
-      - delay: 1s
-      - script.execute: reset_led
-
   - id: turn_on_wake_word
     then:
       - if:
@@ -427,18 +379,12 @@ script:
               - binary_sensor.is_off: mute_switch
               - switch.is_on: use_wake_word
           then:
-            - lambda: id(va).set_use_wake_word(true);
+            - micro_wake_word.start
             - if:
                 condition:
-                  media_player.is_playing:
+                  speaker.is_playing:
                 then:
-                  - media_player.stop:
-            - if:
-                condition:
-                  not:
-                    - voice_assistant.is_running
-                then:
-                  - voice_assistant.start_continuous
+                  - speaker.stop:
             - script.execute: reset_led
           else:
             - logger.log:
@@ -452,8 +398,7 @@ script:
 
   - id: turn_off_wake_word
     then:
-      - voice_assistant.stop
-      - lambda: id(va).set_use_wake_word(false);
+      - micro_wake_word.stop
       - script.execute: reset_led
 
   - id: calibrate_touch
@@ -461,10 +406,10 @@ script:
       button: int
     then:
       - lambda: |-
-          static byte thresh_indices[3] = {0, 0, 0};
+          static uint8_t thresh_indices[3] = {0, 0, 0};
           static uint32_t sums[3] = {0, 0, 0};
-          static byte qsizes[3] = {0, 0, 0};
-          static int consecutive_anomalies_per_button[3] = {0, 0, 0};
+          static uint8_t qsizes[3] = {0, 0, 0};
+          static uint16_t consecutive_anomalies_per_button[3] = {0, 0, 0};
 
           uint32_t newval;
           uint32_t* calibration_values;
@@ -544,3 +489,9 @@ switch:
       - script.execute: turn_on_wake_word
     on_turn_off:
       - script.execute: turn_off_wake_word
+  - platform: gpio
+    id: dac_mute
+    restore_mode: ALWAYS_ON
+    pin:
+      number: GPIO21
+      inverted: True
