@@ -13,6 +13,7 @@ esphome:
     version: '${project_version}'
   min_version: 2024.2.0
   platformio_options:
+    board_build.flash_mode: dio
     build_flags: "-DBOARD_HAS_PSRAM"
     board_build.arduino.memory_type: qio_opi
   on_boot:
