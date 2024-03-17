@@ -359,19 +359,31 @@ script:
     then:
       - if:
           condition:
-            and:
-              - switch.is_on: use_wake_word
-              - binary_sensor.is_off: mute_switch
+            - switch.is_on: notification
           then:
             - light.turn_on:
                 id: top_led
                 blue: 100%
                 red: 100%
                 green: 0%
-                brightness: 60%
-                effect: listening_ww
+                brightness: 100%
+                effect: slow_pulse
           else:
-            - light.turn_off: top_led
+            - if:
+                condition:
+                  and:
+                    - switch.is_on: use_wake_word
+                    - binary_sensor.is_off: mute_switch
+                then:
+                  - light.turn_on:
+                      id: top_led
+                      blue: 100%
+                      red: 100%
+                      green: 0%
+                      brightness: 60%
+                      effect: listening_ww
+                else:
+                  - light.turn_off: top_led
 
   - id: turn_on_wake_word
     then:
@@ -497,3 +509,12 @@ switch:
     pin:
       number: GPIO21
       inverted: True
+  - platform: template
+    name: Notification
+    id: notification
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - script.execute: reset_led
+    on_turn_off:
+      - script.execute: reset_led
