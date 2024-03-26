@@ -75,6 +75,12 @@ api:
     - service: stop_va
       then:
         - voice_assistant.stop
+    - service: notification_on
+      then:
+        - script.execute: turn_on_notification
+    - service: notification_clear
+      then:
+        - script.execute: clear_notification
 
 globals:
   - id: thresh_percent
@@ -89,6 +95,9 @@ globals:
     restore_value: false
   - id: touch_calibration_values_right
     type: uint32_t[5]
+    restore_value: false
+  - id: notification
+    type: bool
     restore_value: false
 
 interval:
@@ -220,6 +229,9 @@ esp32_touch:
   denoise_cap_level: L0
 
 binary_sensor:
+  - platform: status
+    name: "Status"
+
   - platform: esp32_touch
     id: volume_down
     pin: GPIO4
@@ -391,7 +403,7 @@ script:
     then:
       - if:
           condition:
-            - switch.is_on: notification
+            - lambda: return id(notification);
           then:
             - light.turn_on:
                 id: top_led
@@ -416,6 +428,16 @@ script:
                       effect: listening_ww
                 else:
                   - light.turn_off: top_led
+
+  - id: turn_on_notification
+    then:
+      - lambda: id(notification) = true;
+      - script.execute: reset_led
+
+  - id: clear_notification
+    then:
+      - lambda: id(notification) = false;
+      - script.execute: reset_led
 
   - id: set_volume
     mode: restart
@@ -556,13 +578,3 @@ switch:
       - script.execute: turn_on_wake_word
     on_turn_off:
       - script.execute: turn_off_wake_word
-  - platform: template
-    name: Notification
-    id: notification
-    optimistic: true
-    restore_mode: RESTORE_DEFAULT_OFF
-    on_turn_on:
-      - script.execute: reset_led
-    on_turn_off:
-      - script.execute: reset_led
-                  
