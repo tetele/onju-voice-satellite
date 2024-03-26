@@ -250,9 +250,6 @@ esp32_touch:
   denoise_cap_level: L0
 
 binary_sensor:
-  - platform: status
-    name: "Status"
-
   - platform: esp32_touch
     id: volume_down
     pin: GPIO4
