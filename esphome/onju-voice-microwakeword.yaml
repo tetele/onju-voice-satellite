@@ -11,7 +11,7 @@ esphome:
   project:
     name: tetele.onju_voice_satellite
     version: '${project_version}'
-  min_version: 2024.2.0
+  min_version: 2024.3.0
   platformio_options:
     board_build.flash_mode: dio
     build_flags: "-DBOARD_HAS_PSRAM"
