@@ -11,7 +11,7 @@ esphome:
   project:
     name: tetele.onju_voice_satellite
     version: '${project_version}'
-  min_version: 2024.2.0
+  min_version: 2024.3.0
   platformio_options:
     board_build.flash_mode: dio
     build_flags: "-DBOARD_HAS_PSRAM"
@@ -134,6 +134,7 @@ micro_wake_word:
   on_wake_word_detected:
     then:
       - voice_assistant.start
+          wake_word: !lambda return wake_word;
 
 speaker:
   - platform: i2s_audio
