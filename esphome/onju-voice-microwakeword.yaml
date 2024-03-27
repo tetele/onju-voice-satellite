@@ -134,6 +134,7 @@ micro_wake_word:
   on_wake_word_detected:
     then:
       - voice_assistant.start
+          wake_word: !lambda return wake_word;
 
 speaker:
   - platform: i2s_audio
