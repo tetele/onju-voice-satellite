@@ -132,9 +132,8 @@ micro_wake_word:
   # model: hey_jarvis
   # model: alexa
   on_wake_word_detected:
-    then:
-      - voice_assistant.start
-          wake_word: !lambda return wake_word;
+    - voice_assistant.start:
+        wake_word: !lambda return wake_word;
 
 speaker:
   - platform: i2s_audio
