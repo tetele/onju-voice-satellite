@@ -12,6 +12,8 @@ esphome:
     name: tetele.onju_voice_satellite
     version: '${project_version}'
   min_version: 2023.11.6
+  platformio_options:
+    board_build.flash_mode: dio
   on_boot:
     then:
       - light.turn_on:
