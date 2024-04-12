@@ -5,12 +5,13 @@ substitutions:
   device_description: "Onju Voice Satellite with ESPHome software and microWakeWord"
 
 esphome:
-  name: '${name}'
-  comment: '${device_description}'
+  name: "${name}"
+  friendly_name: "{$friendly_name}"
+  comment: "${device_description}"
   name_add_mac_suffix: true
   project:
     name: tetele.onju_voice_satellite
-    version: '${project_version}'
+    version: "${project_version}"
   min_version: 2024.3.0
   platformio_options:
     board_build.flash_mode: dio
@@ -57,8 +58,6 @@ psram:
   mode: octal
   speed: 80MHz
 
-
-
 # Enable logging
 logger:
 
@@ -71,7 +70,7 @@ improv_serial:
 wifi:
   # Set up a wifi access point
   ap:
-    ssid: '${friendly_name}'
+    ssid: "${friendly_name}"
 
 # In combination with the `ap` this allows the user
 # to provision wifi credentials to the device via WiFi AP.
