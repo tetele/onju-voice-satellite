@@ -1,4 +1,4 @@
-# Onju Voice satellite 
+# Onju Voice satellite
 
 Ever since voice satellites [were introduced](https://www.home-assistant.io/blog/2023/04/27/year-of-the-voice-chapter-2/#composing-voice-assistants) to [Home Assistant](https://www.home-assistant.io/), people wanted to use good microphones and speakers for this purpose, but not many were really available.
 
@@ -34,7 +34,7 @@ The config is distributed under the **MIT** License. See [`LICENSE`](LICENSE) fo
 ## Known issues and limitations
 
 - you have to be able to retrofit an Onju Voice PCB inside a 2nd generation Google Nest Mini.
-- ~~the `media_player` component in ESPHome [does not play raw audio coming from Piper TTS](https://github.com/home-assistant/core/issues/92969). It works with any STT that outputs mp3 by default, though~~ [fixed](https://github.com/home-assistant/core/pull/102814) in HA 2023.12
+- ESPHome currently can't use the I2S bus for both listening and playing **simultaneously**. As such, if you want to stream audio (like a TTS notification) to the Onju, you **need** to stop wake word listening first
 - the version for `microWakeWord` is in BETA and probably full of bugs
 
 ## Installation instructions
@@ -54,7 +54,7 @@ After the device has been added to ESPHome, if auto discovery is turned on, the 
 - obviously, a huge thanks to [Justin Alvey](https://twitter.com/justLV) (@justLV) for the excellent Onju Voice project
 - many thanks to Mike Hansen ([@synesthesiam](https://github.com/synesthesiam)) for the relentless work he's put into [Year of the Voice](https://www.home-assistant.io/voice_control/) at Home Assistant
 - thanks to [Klaas Schoute](https://github.com/klaasnicolaas) for helping with a creating a microsite for the automatic installation of this config (still experimental)
-- thanks to the [ESPHome Discord server](https://discord.gg/KhAMKrd) members for both creating the most time saving piece of software ever and for helping out with some kinks with the config - in particular @jesserockz, @ssieb and @Hawwa
+- thanks to the [ESPHome Discord server](https://discord.gg/KhAMKrd) members for both creating the most time saving piece of software ever and for helping out with some kinks with the config - in particular @jesserockz, @ssieb, @Hawwa, @BigBobba
 
 [![GithubSponsor][githubsponsorbadge]][githubsponsor]
 
