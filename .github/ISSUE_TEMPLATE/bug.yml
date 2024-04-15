@@ -8,8 +8,8 @@ body:
       value: Before you open a new issue, search through the existing issues to see if others have had the same problem.
   - type: dropdown
     attributes:
-      label: flavor
-      description: What version of the config are you running?
+      label: Flavor
+      description: What flavor of the config are you running?
       multiple: false
       options:
         - OpenWakeWord or no wake word
