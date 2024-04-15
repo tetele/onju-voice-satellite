@@ -1,0 +1,53 @@
+---
+name: "Bug report"
+description: "Report a bug with the config"
+labels: "bug"
+body:
+  - type: markdown
+    attributes:
+      value: Before you open a new issue, search through the existing issues to see if others have had the same problem.
+  - type: dropdown
+    attributes:
+      label: flavor
+      description: What version of the config are you running?
+      multiple: false
+      options:
+        - OpenWakeWord or no wake word
+        - MicroWakeWord
+      default: 0
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Checklist
+      options:
+        - label: This issue only contains 1 issue (if you have multiple issues, open one issue for each issue).
+          required: true
+        - label: This issue is not a duplicate issue of currently [previous issues](https://github.com/tetele/onju-voice-satellite/issues?q=is%3Aissue+label%3A%22bug%22+)..
+          required: true
+        - label: I am able to consult debug logging for my ESPHome instance.
+          required: false
+  - type: textarea
+    attributes:
+      label: "Describe the issue"
+      description: "A clear and concise description of what the issue is."
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reproduction steps
+      description: "Without steps to reproduce, it will be hard to fix, it is very important that you fill out this part, issues without it will be closed"
+      value: |
+        1.
+        2.
+        3.
+        ...
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: "Debug logs"
+      description: "Look at the logs in ESPHome for the device that is misbehaving, this **needs** to include _everything_ from the startup of ESPHome on the device to the point where you encounter the issue."
+      render: text
+    validations:
+      required: false
