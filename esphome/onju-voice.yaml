@@ -478,7 +478,8 @@ script:
             - lambda: id(va).set_use_wake_word(true);
             - if:
                 condition:
-                  media_player.is_playing:
+                  not:
+                    media_player.is_idle:
                 then:
                   - media_player.stop:
             - if:
