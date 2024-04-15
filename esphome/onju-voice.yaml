@@ -461,6 +461,7 @@ script:
 
   - id: show_volume
     mode: restart
+    then:
       - light.turn_on:
           id: top_led
           effect: show_volume
