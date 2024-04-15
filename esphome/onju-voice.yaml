@@ -130,6 +130,17 @@ media_player:
     mute_pin:
       number: GPIO21
       inverted: True
+    on_state: 
+      then:
+        - lambda: |-
+            static float old_volume = -1;
+            float new_volume = id(onju_out).volume;
+            if(abs(new_volume-old_volume) > 0.0001) {
+              if(old_volume != -1) {
+                id(show_volume)->execute();
+              }
+            }
+            old_volume = new_volume;
 
 microphone:
   - platform: i2s_audio
@@ -447,6 +458,9 @@ script:
       - media_player.volume_set:
           id: onju_out
           volume: !lambda return clamp(id(onju_out).volume+volume, 0.0f, 1.0f);
+
+  - id: show_volume
+    mode: restart
       - light.turn_on:
           id: top_led
           effect: show_volume
