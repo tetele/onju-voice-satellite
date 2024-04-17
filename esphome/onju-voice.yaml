@@ -15,6 +15,8 @@ esphome:
   min_version: 2023.11.6
   platformio_options:
     board_build.flash_mode: dio
+    build_flags: "-DBOARD_HAS_PSRAM"
+    board_build.arduino.memory_type: qio_opi
   on_boot:
     then:
       - light.turn_on:
@@ -51,6 +53,10 @@ esp32:
   board: esp32-s3-devkitc-1
   framework:
     type: arduino
+
+psram:
+  mode: octal
+  speed: 80MHz
 
 # Enable logging
 logger:
