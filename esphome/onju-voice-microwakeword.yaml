@@ -175,11 +175,7 @@ voice_assistant:
         red: 20%
         green: 100%
         effect: speaking
-  on_end:
-    - delay: 500ms
-    - wait_until:
-        not:
-          speaker.is_playing: onju_out
+  on_tts_stream_end:
     - script.execute: reset_led
     - if:
         condition:
