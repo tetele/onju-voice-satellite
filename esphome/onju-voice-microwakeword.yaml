@@ -166,7 +166,7 @@ adf_pipeline:
 
 microphone:
   - platform: adf_pipeline
-    id: adf_microphone
+    id: onju_microphone
     keep_pipeline_alive: true
     gain_log2: 3
     pipeline:
@@ -175,8 +175,8 @@ microphone:
 
 media_player:
   - platform: adf_pipeline
-    id: adf_media_player
-    name: onju_media_player
+    id: onju_out
+    name: None
     internal: false
     keep_pipeline_alive: true
     pipeline:
@@ -187,13 +187,14 @@ media_player:
       then:
         - lambda: |-
             static float old_volume = -1;
-            float new_volume = id(adf_media_player).volume;
+            float new_volume = id(onju_out).volume;
             if(abs(new_volume-old_volume) > 0.0001) {
               if(old_volume != -1) {
                 id(show_volume)->execute();
               }
             }
             old_volume = new_volume;
+
 micro_wake_word:
   model: okay_nabu
   # model: hey_jarvis
@@ -202,12 +203,10 @@ micro_wake_word:
     - voice_assistant.start:
         wake_word: !lambda return wake_word;
 
-
-
 voice_assistant:
   id: va
-  microphone: adf_microphone
-  media_player: adf_media_player
+  microphone: onju_microphone
+  media_player: onju_out
   use_wake_word: false
   on_listening:
     - light.turn_on:
@@ -236,7 +235,7 @@ voice_assistant:
     - delay: 200ms
     - wait_until:
         not:
-          media_player.is_playing: adf_media_player
+          media_player.is_playing: onju_out
     - script.execute: reset_led
     - if:
         condition:
@@ -439,7 +438,7 @@ light:
           name: show_volume
           update_interval: 50ms
           lambda: |-
-            int int_volume = int(id(adf_media_player).volume * 100.0f * it.size());
+            int int_volume = int(id(onju_out).volume * 100.0f * it.size());
             int full_leds = int_volume / 100;
             int last_brightness = int_volume % 100;
             int i = 0;
@@ -519,8 +518,8 @@ script:
       volume: float
     then:
       - media_player.volume_set:
-          id: adf_media_player
-          volume: !lambda return clamp(id(adf_media_player).volume+volume, 0.0f, 1.0f);
+          id: onju_out
+          volume: !lambda return clamp(id(onju_out).volume+volume, 0.0f, 1.0f);
 
   - id: show_volume
     mode: restart
