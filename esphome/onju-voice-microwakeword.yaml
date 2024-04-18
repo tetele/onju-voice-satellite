@@ -148,7 +148,7 @@ adf_pipeline:
     i2s_audio_id: i2s_shared
     i2s_dout_pin: GPIO12
     sample_rate: 16000
-    adf_alc: false
+    adf_alc: true
     bits_per_sample: 32bit
     fixed_settings: true
 
@@ -183,6 +183,17 @@ media_player:
       - self
       - resampler
       - adf_i2s_out
+    on_state: 
+      then:
+        - lambda: |-
+            static float old_volume = -1;
+            float new_volume = id(adf_media_player).volume;
+            if(abs(new_volume-old_volume) > 0.0001) {
+              if(old_volume != -1) {
+                id(show_volume)->execute();
+              }
+            }
+            old_volume = new_volume;
 micro_wake_word:
   model: okay_nabu
   # model: hey_jarvis
@@ -299,11 +310,47 @@ binary_sensor:
     id: volume_down
     pin: GPIO4
     threshold: 539000
+    on_press:
+      then:
+        - light.turn_on: left_led
+        - script.execute:
+            id: set_volume
+            volume: -0.05
+        - delay: 750ms
+        - while:
+            condition:
+              binary_sensor.is_on: volume_down
+            then:
+              - script.execute:
+                  id: set_volume
+                  volume: -0.05
+              - delay: 150ms
+    on_release:
+      then:
+        - light.turn_off: left_led
 
   - platform: esp32_touch
     id: volume_up
     pin: GPIO2
     threshold: 580000
+    on_press:
+      then:
+        - light.turn_on: right_led
+        - script.execute:
+            id: set_volume
+            volume: 0.05
+        - delay: 750ms
+        - while:
+            condition:
+              binary_sensor.is_on: volume_up
+            then:
+              - script.execute:
+                  id: set_volume
+                  volume: 0.05
+              - delay: 150ms
+    on_release:
+      then:
+        - light.turn_off: right_led
 
   - platform: esp32_touch
     id: action
@@ -388,6 +435,23 @@ light:
           name: slow_pulse
           transition_length: 1s
           update_interval: 2s
+      - addressable_lambda:
+          name: show_volume
+          update_interval: 50ms
+          lambda: |-
+            int int_volume = int(id(adf_media_player).volume * 100.0f * it.size());
+            int full_leds = int_volume / 100;
+            int last_brightness = int_volume % 100;
+            int i = 0;
+            for(; i < full_leds; i++) {
+              it[i] = Color::WHITE;
+            }
+            if(i < 4) {
+              it[i++] = Color(64, 64, 64).fade_to_white(last_brightness*256/100);
+            }
+            for(; i < it.size(); i++) {
+              it[i] = Color(64, 64, 64);
+            }
       - addressable_twinkle:
           name: listening_ww
           twinkle_probability: 1%
@@ -449,6 +513,24 @@ script:
       - lambda: id(notification) = false;
       - script.execute: reset_led
 
+  - id: set_volume
+    mode: restart
+    parameters:
+      volume: float
+    then:
+      - media_player.volume_set:
+          id: adf_media_player
+          volume: !lambda return clamp(id(adf_media_player).volume+volume, 0.0f, 1.0f);
+
+  - id: show_volume
+    mode: restart
+    then:
+      - light.turn_on:
+          id: top_led
+          effect: show_volume
+      - delay: 1s
+      - script.execute: reset_led
+
   - id: turn_on_wake_word
     then:
       - if:
@@ -458,11 +540,6 @@ script:
               - switch.is_on: use_wake_word
           then:
             - micro_wake_word.start
-            - if:
-                condition:
-                  speaker.is_playing:
-                then:
-                  - speaker.stop:
             - script.execute: reset_led
           else:
             - logger.log:
