@@ -172,7 +172,6 @@ microphone:
     pipeline:
       - adf_i2s_in
       - self
-#- resampler
 
 media_player:
   - platform: adf_pipeline
@@ -223,6 +222,10 @@ voice_assistant:
         green: 100%
         effect: speaking
   on_end:
+    - delay: 200ms
+    - wait_until:
+        not:
+          media_player.is_playing: adf_media_player
     - script.execute: reset_led
     - if:
         condition:
