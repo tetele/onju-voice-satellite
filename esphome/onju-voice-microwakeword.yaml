@@ -200,6 +200,10 @@ micro_wake_word:
   # model: hey_jarvis
   # model: alexa
   on_wake_word_detected:
+    - if:
+        condition: media_player.is_playing
+        then:
+          - media_player.stop
     - voice_assistant.start:
         wake_word: !lambda return wake_word;
 
