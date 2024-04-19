@@ -203,7 +203,7 @@ micro_wake_word:
     - if:
         condition: media_player.is_playing
         then:
-          - media_player.stop
+          - media_player.pause
     - voice_assistant.start:
         wake_word: !lambda return wake_word;
 
