@@ -34,7 +34,6 @@ esphome:
       - wait_until:
           condition:
             wifi.connected:
-      - script.execute: restore_volume
       - light.turn_on:
           id: top_led
           effect: pulse
@@ -120,10 +119,6 @@ globals:
   - id: notification
     type: bool
     restore_value: false
-  - id: restore_media_player_volume
-    type: float
-    initial_value: "0.5f"
-    restore_value: true
 
 interval:
   - interval: 1s
@@ -528,10 +523,7 @@ script:
     then:
       - media_player.volume_set:
           id: onju_out
-          volume: !lambda |-
-            float new_volume = clamp(id(onju_out).volume+volume, 0.0f, 1.0f);
-            id(restore_media_player_volume) = new_volume;
-            return new_volume;
+          volume: !lambda return clamp(id(onju_out).volume+volume, 0.0f, 1.0f);
 
   - id: show_volume
     mode: restart
