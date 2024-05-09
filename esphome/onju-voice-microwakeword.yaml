@@ -3,6 +3,12 @@ substitutions:
   friendly_name: "Onju Voice Satellite"
   project_version: "1.0.0"
   device_description: "Onju Voice Satellite with ESPHome software and microWakeWord"
+external_components:
+  - source:
+      type: git
+      url: https://github.com/gnumpi/esphome_audio
+      ref: main
+    components: [ adf_pipeline, i2s_audio ]
 
 esphome:
   name: "${name}"
@@ -52,6 +58,11 @@ esp32:
   board: esp32-s3-devkitc-1
   framework:
     type: esp-idf
+    version: recommended
+    sdkconfig_options:
+      # need to set a s3 compatible board for the adf-sdk to compile
+      # board specific code is not used though
+      CONFIG_ESP32_S3_BOX_BOARD: "y"
 
 psram:
   mode: octal
@@ -121,35 +132,84 @@ interval:
           id: calibrate_touch
           button: 2
 
+
 i2s_audio:
-  - i2s_lrclk_pin: GPIO13
+  - id: i2s_shared
+    i2s_lrclk_pin: GPIO13
     i2s_bclk_pin: GPIO18
+    access_mode: duplex
+
+
+adf_pipeline:
+  - platform: i2s_audio
+    type: audio_out
+    id: adf_i2s_out
+    i2s_audio_id: i2s_shared
+    i2s_dout_pin: GPIO12
+    sample_rate: 16000
+    adf_alc: true
+    bits_per_sample: 32bit
+    fixed_settings: true
+
+  - platform: i2s_audio
+    type: audio_in
+    id: adf_i2s_in
+    i2s_audio_id: i2s_shared
+    i2s_din_pin: GPIO17
+    channel: right
+    pdm: false
+    sample_rate: 16000
+    bits_per_sample: 32bit
+    fixed_settings: true
+
+
+microphone:
+  - platform: adf_pipeline
+    id: onju_microphone
+    keep_pipeline_alive: true
+    gain_log2: 3
+    pipeline:
+      - adf_i2s_in
+      - self
+
+media_player:
+  - platform: adf_pipeline
+    id: onju_out
+    name: None
+    internal: false
+    keep_pipeline_alive: true
+    pipeline:
+      - self
+      - resampler
+      - adf_i2s_out
+    on_state: 
+      then:
+        - lambda: |-
+            static float old_volume = -1;
+            float new_volume = id(onju_out).volume;
+            if(abs(new_volume-old_volume) > 0.0001) {
+              if(old_volume != -1) {
+                id(show_volume)->execute();
+              }
+            }
+            old_volume = new_volume;
 
 micro_wake_word:
   model: okay_nabu
   # model: hey_jarvis
   # model: alexa
   on_wake_word_detected:
+    - if:
+        condition: media_player.is_playing
+        then:
+          - media_player.pause
     - voice_assistant.start:
         wake_word: !lambda return wake_word;
-
-speaker:
-  - platform: i2s_audio
-    id: onju_out
-    dac_type: external
-    i2s_dout_pin: GPIO12
-
-microphone:
-  - platform: i2s_audio
-    id: onju_microphone
-    i2s_din_pin: GPIO17
-    adc_type: external
-    pdm: false
 
 voice_assistant:
   id: va
   microphone: onju_microphone
-  speaker: onju_out
+  media_player: onju_out
   use_wake_word: false
   on_listening:
     - light.turn_on:
@@ -174,7 +234,11 @@ voice_assistant:
         red: 20%
         green: 100%
         effect: speaking
-  on_tts_stream_end:
+  on_end:
+    - delay: 200ms
+    - wait_until:
+        not:
+          media_player.is_playing: onju_out
     - script.execute: reset_led
     - if:
         condition:
@@ -248,11 +312,47 @@ binary_sensor:
     id: volume_down
     pin: GPIO4
     threshold: 539000
+    on_press:
+      then:
+        - light.turn_on: left_led
+        - script.execute:
+            id: set_volume
+            volume: -0.05
+        - delay: 750ms
+        - while:
+            condition:
+              binary_sensor.is_on: volume_down
+            then:
+              - script.execute:
+                  id: set_volume
+                  volume: -0.05
+              - delay: 150ms
+    on_release:
+      then:
+        - light.turn_off: left_led
 
   - platform: esp32_touch
     id: volume_up
     pin: GPIO2
     threshold: 580000
+    on_press:
+      then:
+        - light.turn_on: right_led
+        - script.execute:
+            id: set_volume
+            volume: 0.05
+        - delay: 750ms
+        - while:
+            condition:
+              binary_sensor.is_on: volume_up
+            then:
+              - script.execute:
+                  id: set_volume
+                  volume: 0.05
+              - delay: 150ms
+    on_release:
+      then:
+        - light.turn_off: right_led
 
   - platform: esp32_touch
     id: action
@@ -270,9 +370,9 @@ binary_sensor:
                 format: "Voice assistant is running: %s"
                 args: ['id(va).is_running() ? "yes" : "no"']
             - if:
-                condition: speaker.is_playing
+                condition: media_player.is_playing
                 then:
-                  - speaker.stop
+                  - media_player.stop
             - if:
                 condition: voice_assistant.is_running
                 then:
@@ -284,9 +384,9 @@ binary_sensor:
                 tag: "action_click"
                 format: "Voice assistant was running with wake word detection enabled. Starting continuously"
             - if:
-                condition: speaker.is_playing
+                condition: media_player.is_playing
                 then:
-                  - speaker.stop
+                  - media_player.stop
             - voice_assistant.stop
             - delay: 1s
             - script.execute: reset_led
@@ -337,6 +437,23 @@ light:
           name: slow_pulse
           transition_length: 1s
           update_interval: 2s
+      - addressable_lambda:
+          name: show_volume
+          update_interval: 50ms
+          lambda: |-
+            int int_volume = int(id(onju_out).volume * 100.0f * it.size());
+            int full_leds = int_volume / 100;
+            int last_brightness = int_volume % 100;
+            int i = 0;
+            for(; i < full_leds; i++) {
+              it[i] = Color::WHITE;
+            }
+            if(i < 4) {
+              it[i++] = Color(64, 64, 64).fade_to_white(last_brightness*256/100);
+            }
+            for(; i < it.size(); i++) {
+              it[i] = Color(64, 64, 64);
+            }
       - addressable_twinkle:
           name: listening_ww
           twinkle_probability: 1%
@@ -398,6 +515,24 @@ script:
       - lambda: id(notification) = false;
       - script.execute: reset_led
 
+  - id: set_volume
+    mode: restart
+    parameters:
+      volume: float
+    then:
+      - media_player.volume_set:
+          id: onju_out
+          volume: !lambda return clamp(id(onju_out).volume+volume, 0.0f, 1.0f);
+
+  - id: show_volume
+    mode: restart
+    then:
+      - light.turn_on:
+          id: top_led
+          effect: show_volume
+      - delay: 1s
+      - script.execute: reset_led
+
   - id: turn_on_wake_word
     then:
       - if:
@@ -407,11 +542,6 @@ script:
               - switch.is_on: use_wake_word
           then:
             - micro_wake_word.start
-            - if:
-                condition:
-                  speaker.is_playing:
-                then:
-                  - speaker.stop:
             - script.execute: reset_led
           else:
             - logger.log:
