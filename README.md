@@ -18,10 +18,10 @@ The config is distributed under the **MIT** License. See [`LICENSE`](LICENSE) fo
 
 - wake word (including [microWakeWord](https://www.esphome.io/components/micro_wake_word) in an experimental phase), push to talk, on-demand and continuous conversation support
 - response playback
-- audio media player (not supported by microWakeWord config yet)
+- audio media player
 - service exposed in HA to start and stop the voice assistant from another device/trigger
 - visual feedback of the wake word listening/audio recording/success/error status via the Mini's onboard top LEDs
-- uses all 3 of the original Mini's touch controls as volume controls and a means of manually starting the assistant and setting the volume (volume supported only for non-microWakeWord variant)
+- uses all 3 of the original Mini's touch controls as volume controls and a means of manually starting the assistant and setting the volume
 - uses the original Mini's microphone mute button to prevent the wake word engine from starting unintendedly
 - automatic continuous touch control calibration
 
@@ -35,7 +35,7 @@ The config is distributed under the **MIT** License. See [`LICENSE`](LICENSE) fo
 
 - you have to be able to retrofit an Onju Voice PCB inside a 2nd generation Google Nest Mini.
 - ESPHome currently can't use the I2S bus for both listening and playing **simultaneously**. As such, if you want to stream audio (like a TTS notification) to the Onju, you **need** to stop wake word listening first
-- the version for `microWakeWord` is in BETA and probably full of bugs
+- the version for `microWakeWord` is in BETA and probably full of bugs (please [report them](https://github.com/tetele/onju-voice-satellite/issues/new?assignees=&labels=bug&projects=&template=bug.yml) if you find any)
 
 ## Installation instructions
 
@@ -53,10 +53,12 @@ After the device has been added to ESPHome, if auto discovery is turned on, the 
 
 - obviously, a huge thanks to [Justin Alvey](https://twitter.com/justLV) (@justLV) for the excellent Onju Voice project
 - many thanks to Mike Hansen ([@synesthesiam](https://github.com/synesthesiam)) for the relentless work he's put into [Year of the Voice](https://www.home-assistant.io/voice_control/) at Home Assistant
+- thanks to [@kahrendt](https://github.com/kahrendt) for [microWakeWord](https://github.com/kahrendt/microWakeWord)
+- thanks to [@gnumpi](https://github.com/gnumpi) for migrating the ESPHome [`media_player` component to ESP-IDF](https://github.com/gnumpi/esphome_audio)
 - thanks to [Klaas Schoute](https://github.com/klaasnicolaas) for helping with a creating a microsite for the automatic installation of this config (still experimental)
 - thanks to the [ESPHome Discord server](https://discord.gg/KhAMKrd) members for both creating the most time saving piece of software ever and for helping out with some kinks with the config - in particular @jesserockz, @ssieb, @Hawwa, @BigBobba
 
-[![GithubSponsor][githubsponsorbadge]][githubsponsor]
+If you'd like to thank me for creating and maintaining this config, you can [![GithubSponsor][githubsponsorbadge]][githubsponsor]
 
 [githubsponsor]: https://github.com/sponsors/tetele/
 [githubsponsorbadge]: https://img.shields.io/badge/sponsor%20me%20on%20github-sponsor-yellow.svg?style=for-the-badge
