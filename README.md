@@ -6,7 +6,7 @@ In a valiant attempt to free a Google Nest Mini (2nd generation) from its privac
 
 The purpose of this [ESPHome](https://www.esphome.io/) config is to be able to use such a modded Nest Mini as a voice satellite in Home Assistant. Here's a small demo:
 
-https://youtu.be/fuX6IYa79gA
+[![Watch the demo](https://i.ytimg.com/vi/fuX6IYa79gA/hqdefault.jpg)](https://www.youtube.com/watch?v=fuX6IYa79gA)
 
 ## License
 
