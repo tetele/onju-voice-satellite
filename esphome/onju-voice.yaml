@@ -62,6 +62,7 @@ logger:
 
 # Allow OTA updates
 ota:
+  platform: esphome
 
 # Allow provisioning Wi-Fi via serial
 improv_serial:
