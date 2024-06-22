@@ -3,6 +3,9 @@ substitutions:
   friendly_name: "Onju Voice Satellite"
   project_version: "1.0.0"
   device_description: "Onju Voice Satellite with ESPHome software"
+# If you configure an ap pw and forget it you need to open up your device again to flash it.
+# Tip: Therfore you can configure the "Setup code" of your Mini as your ap password.
+  wifi_ap_password: ""
 
 esphome:
   name: "${name}"
@@ -71,6 +74,7 @@ wifi:
   # Set up a wifi access point
   ap:
     ssid: "${friendly_name}"
+    password: "${wifi_ap_password}"
 
 # In combination with the `ap` this allows the user
 # to provision wifi credentials to the device via WiFi AP.
