@@ -529,6 +529,7 @@ script:
     then:
       - light.turn_on:
           id: top_led
+          brightness: 60%
           effect: show_volume
       - delay: 1s
       - script.execute: reset_led
