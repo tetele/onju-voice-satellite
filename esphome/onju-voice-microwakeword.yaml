@@ -18,7 +18,7 @@ esphome:
   project:
     name: tetele.onju_voice_satellite
     version: "${project_version}"
-  min_version: 2024.6.0
+  min_version: 2024.7.0
   platformio_options:
     board_build.flash_mode: dio
     board_build.arduino.memory_type: qio_opi
@@ -195,9 +195,12 @@ media_player:
             old_volume = new_volume;
 
 micro_wake_word:
-  model: okay_nabu
-  # model: hey_jarvis
-  # model: alexa
+  models:
+    #- model: https://github.com/kahrendt/microWakeWord/releases/download/v2.1_models/alexa.json
+    - model: https://github.com/kahrendt/microWakeWord/releases/download/v2.1_models/okay_nabu.json
+    #- model: https://github.com/kahrendt/microWakeWord/releases/download/v2.1_models/hey_jarvis.json
+  vad:
+    model: https://github.com/kahrendt/microWakeWord/releases/download/v2.1_models/vad.json
   on_wake_word_detected:
     - if:
         condition: media_player.is_playing
@@ -235,10 +238,9 @@ voice_assistant:
         green: 100%
         effect: speaking
   on_end:
-    - delay: 200ms
     - wait_until:
         not:
-          media_player.is_playing: onju_out
+          voice_assistant.is_running:
     - script.execute: reset_led
     - if:
         condition:
@@ -246,7 +248,6 @@ voice_assistant:
             - switch.is_on: use_wake_word
             - binary_sensor.is_off: mute_switch
         then:
-          - delay: 200ms
           - micro_wake_word.start
   on_client_connected:
     - if:
