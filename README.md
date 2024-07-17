@@ -29,7 +29,7 @@ The config is distributed under the **MIT** License. See [`LICENSE`](LICENSE) fo
 
 - Home Assistant 2024.2.0 or newer
 - A voice assistant [configured in HA](https://my.home-assistant.io/redirect/voice_assistants/) with STT and TTS in a language of your choice
-- ESPHome 2024.2.0 or newer
+- ESPHome 2024.7.0 or newer
 
 ## Known issues and limitations
 

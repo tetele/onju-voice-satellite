@@ -199,6 +199,7 @@ micro_wake_word:
     #- model: https://github.com/kahrendt/microWakeWord/releases/download/v2.1_models/alexa.json
     - model: https://github.com/kahrendt/microWakeWord/releases/download/v2.1_models/okay_nabu.json
     #- model: https://github.com/kahrendt/microWakeWord/releases/download/v2.1_models/hey_jarvis.json
+    #- model: https://github.com/kahrendt/microWakeWord/releases/download/v2.1_models/hey_mycroft.json
   vad:
     model: https://github.com/kahrendt/microWakeWord/releases/download/v2.1_models/vad.json
   on_wake_word_detected:
