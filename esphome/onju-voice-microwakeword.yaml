@@ -241,7 +241,7 @@ voice_assistant:
   on_end:
     - wait_until:
         not:
-          voice_assistant.is_running:
+          media_player.is_playing:
     - script.execute: reset_led
     - if:
         condition:
