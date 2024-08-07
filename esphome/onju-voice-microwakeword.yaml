@@ -212,6 +212,10 @@ micro_wake_word:
         condition: media_player.is_playing
         then:
           - media_player.pause
+    - media_player.play_media: "${wakeup_sound_url}"
+    - wait_until:
+        not:
+          media_player.is_playing: onju_out
     - voice_assistant.start:
         wake_word: !lambda return wake_word;
 
@@ -236,6 +240,7 @@ voice_assistant:
         green: 20%
         brightness: 70%
         effect: processing
+    - media_player.play_media: "${vad_end_sound_url}"
   on_tts_end:
     - light.turn_on:
         id: top_led
@@ -279,6 +284,7 @@ voice_assistant:
         red: 100%
         green: 0%
         effect: none
+    - media_player.play_media: "${error_sound_url}"
     - delay: 1s
     - script.execute: reset_led
 
