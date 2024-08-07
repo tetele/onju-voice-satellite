@@ -1,8 +1,12 @@
 substitutions:
   name: "onju-voice"
   friendly_name: "Onju Voice Satellite"
-  project_version: "1.0.0"
+  project_version: "1.1.0"
   device_description: "Onju Voice Satellite with ESPHome software and microWakeWord"
+  wakeup_sound_url: "https://github.com/tetele/onju-voice-satellite/raw/main/res/wakeup.mp3" # New Notification #7 by UNIVERSFIELD https://freesound.org/people/UNIVERSFIELD/sounds/736267/
+  error_sound_url: "https://github.com/tetele/onju-voice-satellite/raw/main/res/error.mp3" # Error #8 by UNIVERSFIELD https://freesound.org/people/UNIVERSFIELD/sounds/734442/
+  timer_finished_sound_url: "https://github.com/tetele/onju-voice-satellite/raw/main/res/timer_finished.mp3" # New Notification #6 by UNIVERSFIELD https://freesound.org/people/UNIVERSFIELD/sounds/734445/
+
 external_components:
   - source:
       type: git
@@ -18,7 +22,7 @@ esphome:
   project:
     name: tetele.onju_voice_satellite
     version: "${project_version}"
-  min_version: 2024.7.0
+  min_version: 2024.7.3
   platformio_options:
     board_build.flash_mode: dio
     board_build.arduino.memory_type: qio_opi
@@ -207,6 +211,10 @@ micro_wake_word:
         condition: media_player.is_playing
         then:
           - media_player.pause
+    - media_player.play_media: "${wakeup_sound_url}"
+    - wait_until:
+        not:
+          media_player.is_playing: onju_out
     - voice_assistant.start:
         wake_word: !lambda return wake_word;
 
@@ -250,6 +258,20 @@ voice_assistant:
             - binary_sensor.is_off: mute_switch
         then:
           - micro_wake_word.start
+  on_timer_started:
+    - light.turn_on:
+        id: top_led
+        effect: random_twinkle
+  on_timer_finished:
+    - media_player.play_media: "${timer_finished_sound_url}"
+    - light.turn_on:
+        id: top_led
+        blue: 0%
+        red: 100%
+        green: 80%
+        effect: slow_pulse
+    - delay: 5s
+    - script.execute: reset_led
   on_client_connected:
     - if:
         condition:
@@ -268,6 +290,7 @@ voice_assistant:
           - voice_assistant.stop:
           - micro_wake_word.stop:
   on_error:
+    - media_player.play_media: "${error_sound_url}"
     - light.turn_on:
         id: top_led
         blue: 0%
@@ -468,6 +491,9 @@ light:
       - addressable_flicker:
           name: speaking
           intensity: 35%
+      - addressable_random_twinkle:
+          name: random_twinkle
+          twinkle_probability: 45%
   - platform: partition
     id: right_led
     segments:

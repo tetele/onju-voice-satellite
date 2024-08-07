@@ -14,6 +14,8 @@ The PCB is **NOT** my work and has [its own license](https://github.com/justLV/o
 
 The config is distributed under the **MIT** License. See [`LICENSE`](LICENSE) for more information.
 
+The notification sounds used are under [CC BY 4.0 ATTRIBUTION](https://creativecommons.org/licenses/by/4.0/) license.
+
 ## Features
 
 - wake word (including [microWakeWord](https://www.esphome.io/components/micro_wake_word) in an experimental phase), push to talk, on-demand and continuous conversation support
@@ -27,9 +29,9 @@ The config is distributed under the **MIT** License. See [`LICENSE`](LICENSE) fo
 
 ## Pre-requisites
 
-- Home Assistant 2024.2.0 or newer
+- Home Assistant 2024.7.0 or newer
 - A voice assistant [configured in HA](https://my.home-assistant.io/redirect/voice_assistants/) with STT and TTS in a language of your choice
-- ESPHome 2024.7.0 or newer
+- ESPHome 2024.7.3 or newer
 
 ## Known issues and limitations
 
@@ -49,6 +51,14 @@ Double check Wifi connection details, API encryption key and device name/friendl
 
 After the device has been added to ESPHome, if auto discovery is turned on, the device should appear in Home Assistant automatically. Otherwise, check out [this guide](https://esphome.io/guides/getting_started_hassio.html).
 
+### Notification sounds
+
+Although the online MP3 files should work, downloading them implies some lag. It's far better to have them locally available.
+
+1. Create a folder named `sounds` in your `config` folder under `www`. You now have a `config/www/sounds` folder.
+1. Upload notification sounds in the folder (MP3 prefferable, to avoid encoding issues), e.g. `error.mp3`
+1. Replace the URL in the `substitutions:` section with your own URLs (e.g. `http://homeassistant.local:8123/local/sounds/error.mp3`). If your HA instance is available at `http://homeassistant.local:8123/`, then whatever you upload to the `www` folder is available at `http://homeassistant.local:8123/local/`
+
 ## Credits
 
 - obviously, a huge thanks to [Justin Alvey](https://twitter.com/justLV) (@justLV) for the excellent Onju Voice project
@@ -57,6 +67,7 @@ After the device has been added to ESPHome, if auto discovery is turned on, the 
 - thanks to [@gnumpi](https://github.com/gnumpi) for migrating the ESPHome [`media_player` component to ESP-IDF](https://github.com/gnumpi/esphome_audio)
 - thanks to [Klaas Schoute](https://github.com/klaasnicolaas) for helping with a creating a microsite for the automatic installation of this config (still experimental)
 - thanks to the [ESPHome Discord server](https://discord.gg/KhAMKrd) members for both creating the most time saving piece of software ever and for helping out with some kinks with the config - in particular @jesserockz, @ssieb, @Hawwa, @BigBobba
+- thanks to [UNIVERSFIELD](https://freesound.org/people/UNIVERSFIELD/) for the notification sounds (licensed [CC BY 4.0 ATTRIBUTION](https://creativecommons.org/licenses/by/4.0/), slightly shortened and converted to mono)
 
 If you'd like to thank me for creating and maintaining this config, you can [![GithubSponsor][githubsponsorbadge]][githubsponsor]
 
