@@ -494,7 +494,6 @@ light:
       - addressable_random_twinkle:
           name: random_twinkle
           twinkle_probability: 45%
-          # progress_interval: 32ms
   - platform: partition
     id: right_led
     segments:
