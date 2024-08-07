@@ -14,6 +14,8 @@ The PCB is **NOT** my work and has [its own license](https://github.com/justLV/o
 
 The config is distributed under the **MIT** License. See [`LICENSE`](LICENSE) for more information.
 
+The notification sounds used are under [CC BY 4.0 ATTRIBUTION](https://creativecommons.org/licenses/by/4.0/) license.
+
 ## Features
 
 - wake word (including [microWakeWord](https://www.esphome.io/components/micro_wake_word) in an experimental phase), push to talk, on-demand and continuous conversation support
@@ -57,6 +59,7 @@ After the device has been added to ESPHome, if auto discovery is turned on, the 
 - thanks to [@gnumpi](https://github.com/gnumpi) for migrating the ESPHome [`media_player` component to ESP-IDF](https://github.com/gnumpi/esphome_audio)
 - thanks to [Klaas Schoute](https://github.com/klaasnicolaas) for helping with a creating a microsite for the automatic installation of this config (still experimental)
 - thanks to the [ESPHome Discord server](https://discord.gg/KhAMKrd) members for both creating the most time saving piece of software ever and for helping out with some kinks with the config - in particular @jesserockz, @ssieb, @Hawwa, @BigBobba
+- thanks to [UNIVERSFIELD](https://freesound.org/people/UNIVERSFIELD/) for the notification sounds (licensed [CC BY 4.0 ATTRIBUTION](https://creativecommons.org/licenses/by/4.0/), slightly shortened and converted to mono)
 
 If you'd like to thank me for creating and maintaining this config, you can [![GithubSponsor][githubsponsorbadge]][githubsponsor]
 
