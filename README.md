@@ -51,6 +51,14 @@ Double check Wifi connection details, API encryption key and device name/friendl
 
 After the device has been added to ESPHome, if auto discovery is turned on, the device should appear in Home Assistant automatically. Otherwise, check out [this guide](https://esphome.io/guides/getting_started_hassio.html).
 
+### Notification sounds
+
+Although the online MP3 files should work, downloading them implies some lag. It's far better to have them locally available.
+
+1. Create a folder named `sounds` in your `config` folder under `www`. You now have a `config/www/sounds` folder.
+1. Upload notification sounds in the folder (MP3 prefferable, to avoid encoding issues), e.g. `error.mp3`
+1. Replace the URL in the `substitutions:` section with your own URLs (e.g. `http://homeassistant.local:8123/local/sounds/error.mp3`). If your HA instance is available at `http://homeassistant.local:8123/`, then whatever you upload to the `www` folder is available at `http://homeassistant.local:8123/local/`
+
 ## Credits
 
 - obviously, a huge thanks to [Justin Alvey](https://twitter.com/justLV) (@justLV) for the excellent Onju Voice project
