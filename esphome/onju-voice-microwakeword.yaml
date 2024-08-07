@@ -3,6 +3,11 @@ substitutions:
   friendly_name: "Onju Voice Satellite"
   project_version: "1.0.0"
   device_description: "Onju Voice Satellite with ESPHome software and microWakeWord"
+  wakeup_sound_url: "https://github.com/tetele/onju-voice-satellite/raw/main/res/wakeup.wav" # New Notification #7 by UNIVERSFIELD https://freesound.org/people/UNIVERSFIELD/sounds/736267/
+  error_sound_url: "https://github.com/tetele/onju-voice-satellite/raw/main/res/error.wav" # Error #8 by UNIVERSFIELD https://freesound.org/people/UNIVERSFIELD/sounds/734442/
+  vad_end_sound_url: "https://github.com/tetele/onju-voice-satellite/raw/main/res/vad_end.wav" # System Notification by UNIVERSFIELD https://freesound.org/people/UNIVERSFIELD/sounds/730122/
+  timer_finished_sound_url: "https://github.com/tetele/onju-voice-satellite/raw/main/res/timer_finished.wav" # New Notification #6 by UNIVERSFIELD https://freesound.org/people/UNIVERSFIELD/sounds/734445/
+
 external_components:
   - source:
       type: git
