@@ -434,6 +434,7 @@ script:
                 condition:
                   and:
                     - switch.is_on: use_wake_word
+                    - switch.is_on: flicker_wake_word
                     - binary_sensor.is_off: mute_switch
                 then:
                   - light.turn_on:
@@ -600,3 +601,13 @@ switch:
       - script.execute: turn_on_wake_word
     on_turn_off:
       - script.execute: turn_off_wake_word
+  - platform: template
+    name: Wake Word Listening Light
+    id: flicker_wake_word
+    entity_category: config
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    on_turn_on:
+      - script.execute: reset_led
+    on_turn_off:
+      - script.execute: reset_led
