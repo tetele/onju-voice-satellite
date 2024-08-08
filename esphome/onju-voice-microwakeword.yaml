@@ -54,6 +54,9 @@ esphome:
           blue: 0%
       - delay: 1s
       - script.execute: reset_led
+      - media_player.volume_set:
+          id: onju_out
+          volume: !lambda "return id(volume_percent);"
 
 dashboard_import:
   package_import_url: github://tetele/onju-voice-satellite/esphome/onju-voice-microwakeword.yaml@main
@@ -123,6 +126,10 @@ globals:
   - id: notification
     type: bool
     restore_value: false
+  - id: volume_percent
+    type: float
+    initial_value: "0.5"
+    restore_value: yes
 
 interval:
   - interval: 1s
@@ -197,6 +204,7 @@ media_player:
               }
             }
             old_volume = new_volume;
+            id(volume_percent) = old_volume;
 
 micro_wake_word:
   models:
