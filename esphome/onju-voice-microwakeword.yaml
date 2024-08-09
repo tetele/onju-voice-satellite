@@ -149,23 +149,22 @@ adf_pipeline:
     id: adf_i2s_out
     i2s_audio_id: i2s_shared
     i2s_dout_pin: GPIO12
-    sample_rate: 16000
-    adf_alc: true
-    alc_max: .5
-    bits_per_sample: 32bit
     fixed_settings: true
+    use_apll: true
     channel: left
+    sample_rate: 48000
+    alc_max: .5
 
   - platform: i2s_audio
     type: audio_in
     id: adf_i2s_in
     i2s_audio_id: i2s_shared
     i2s_din_pin: GPIO17
-    channel: left
-    pdm: false
-    sample_rate: 16000
-    bits_per_sample: 32bit
     fixed_settings: true
+    use_apll: true
+    channel: left
+    sample_rate: 48000
+    pdm: false
 
 microphone:
   - platform: adf_pipeline
@@ -174,6 +173,7 @@ microphone:
     gain_log2: 3
     pipeline:
       - adf_i2s_in
+      - resampler
       - self
 
 media_player:
