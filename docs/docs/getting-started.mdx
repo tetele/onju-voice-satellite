@@ -1,0 +1,89 @@
+---
+id: getting-started
+title: Getting Started
+description: 'Instructions how to get started with the Onju Voice Satellite'
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import ESPHomeButton from '@site/src/components/ESPWebTools';
+import { faUsb } from '@fortawesome/free-brands-svg-icons';
+
+# Get started
+
+This guide will walk you through the steps needed to set up your Onju Voice PCB with ESPHome. You'll go through the steps of replacing the PCB in the Google Nest mini V2, installing the necessary software, and configuring the settings to get everything up and running smoothly.
+
+## Step 1: Install firmware
+
+Use the method below to provide your Onju Voice PCB with the correct firmware.
+
+<Tabs>
+  <TabItem value="usb" label={<><icon icon={faUsb} size="lg"/> USB</>}>
+
+_Make sure this page is opened in a Chromium-based browser on a desktop. The software installation does not work with a tablet or phone._
+
+:::note
+If your device does not appear in the list, make sure you are using a USB data cable (i.e., not power-only), and try installing the [driver](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers?tab=downloads) for the serial chip.
+:::
+
+1. Press the blue **connect** button below, a pop-up window will appear with a list of available USB devices.
+2. Hold down the `BOOT` button on the Onju Voice PCB ans connect a USB cable.
+    - _Note_: this prevents the device from reconnecting repeatedly.
+3. In the pop-up window, a new entry should appear. Select this USB serial port and click **Connect**.
+4. Choose **Install Onju Voice Satellite**, then click **Install**.
+5. After installation, click **Next**.
+    - _Note_: since the device is still in BOOT mode, you'll return to a previous pop-up window.
+6. Refresh the browser page.
+7. Press the `RST` button on the Onju Voice PCB and repeat steps 1 and 3 to reconnect to the device.
+8. In the pop-up window, choose **Connect to Wi-Fi**.
+    - Add the Onju Voice Satellite to your Wi-Fi network:
+      - Select your network from the list and enter the credentials for your 2.4 GHz Wi-Fi network.
+      - Click **Connect**.
+      - The Onju Voice Satellite is now connected to your network.
+    - _note_: If you wait to long, the option to connect to Wi-Fi disappears. In that case, repeat step 6 - 8.
+9. Congratulations 🎉 You have successfully installed the firmware on your Onju Voice Satellite.
+    - The LEDs on the Onju Voice PCB should now be blinking green.
+
+  <ESPHomeButton />
+  </TabItem>
+</Tabs>
+
+## Step 2: Replace PCB in Google Nest Mini
+
+Use the video below to perform the PCB "transplant". You can find some [instructions for disassembly here](<https://www.ifixit.com/Teardown/Google+Nest+Mini+(2nd+generation)+Teardown/130974>).
+
+<iframe class="youtube-video" src="https://www.youtube.com/embed/VaQkc-sgc04?si=YNCnI69w53uL8fLk&amp;start=168" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+## Step 3: Connect to Home Assistant
+
+You have two options to add the Onju Voice Satellite to Home Assistant.
+
+### Option 1: During firmware installation
+
+1. Immediately after setting up your Wi-Fi network (from step 1), you will see a screen with the option **Add to Home Assistant**.
+    - This opens the **My** link to Home Assistant (see image below).
+      - If you have not used My Home Assistant before, you will need to configure it. If your Home Assistant URL is not accessible on `http://homeassistant.local:8123`, replace it with the URL to your Home Assistant instance.
+2. Click on **Open the link**.
+3. It opens your Home Assistant instance and asks you to set up, click **OK**.
+4. Congratulations 🎉 You have successfully added the Onju Voice Satellite to your Home Assistant instance.
+
+<p align="left">
+  <img width="60%" src={require('@site/static/img/installation/my-link.png').default} />
+</p>
+
+### Option 2: Auto discovery
+
+When the Onju Voice Satellite is added to a network to which your Home Assistant instance is also connected, your device will automatically be recognized in Home Assistant.
+
+1. Under [**Settings** > **Devices & Services**](https://my.home-assistant.io/redirect/integrations/), your Onju Voice Satellite should be discovered (see image below).
+2. Click on **Configure**, at the discovered device.
+3. It asks if you want to add the device and click **Submit**.
+4. Congratulations 🎉 You have successfully added the Onju Voice Satellite to your Home Assistant instance.
+
+<p align="left">
+  <img width="40%" src={require('@site/static/img/installation/auto-discovery.png').default} />
+</p>
+
+## Step 4: Talk to your voice assistant
+
+Congratulations 🎉 You have gone successfully through everything to get started with your Onju Voice Satellite. If you have any questions, please check the [FAQ page](/docs/faq) first and if you can't find the answer there, you can always ask your question on [Github](https://github.com/tetele/onju-voice-satellite).
