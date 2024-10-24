@@ -15,12 +15,20 @@ const sidebars: SidebarsConfig = {
   docSidebar: [
     'introduction',
     'getting-started',
-    'configuration',
     {
       type: 'category',
+      collapsed: false,
+      label: 'Configuration',
+      items: [
+        'configuration/rename',
+      ],
+    },
+    {
+      type: 'category',
+      collapsed: false,
       label: 'Advanced',
       items: [
-        'advanced/firmware_customization',
+        'advanced/firmware_changes',
       ],
     }
   ],

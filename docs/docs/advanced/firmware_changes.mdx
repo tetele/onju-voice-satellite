@@ -1,0 +1,31 @@
+---
+id: firmware_changes
+title: Customizing the Firmware
+description: Learn how to customize the Onju Voice Satellite's firmware using ESPHome.
+---
+
+# Customizing the Firmware
+
+The Onju Voice Satellite's firmware is built on [ESPHome](https://esphome.io), a platform designed for customization through simple YAML configurations. Whether you need to tweak the device's functionality or adapt it for different use cases, the process is straightforward.
+
+This guide will walk you through how to adopt the device and customize its firmware using the [ESPHome Dashboard][esphome-dashboard].
+
+## Adopting the Device
+
+Before making any changes to the firmware, you first need to adopt the device into the ESPHome. Once your [ESPHome Dashboard][esphome-dashboard] is up and running, and the Onju Voice Satellite is connected to your local network, you should see an option to adopt it.
+
+<p align="left">
+  <img
+    src={require('@site/static/img/customization/adopt-esphome.png').default}
+    alt='Adopting the Onju Voice Satellite in ESPHome'
+  />
+</p>
+
+Following the adoption steps will automatically:
+
+1. Create a unique ESPHome configuration file for your device.
+2. Set up a secure API encryption key, allowing communication between Home Assistant and your device.
+3. Configure the device's network settings, such as Wi-Fi credentials.
+4. Upload the customized firmware onto the Onju Voice Satellite.
+
+[esphome-dashboard]: https://esphome.io/guides/getting_started_hassio.html
