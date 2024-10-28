@@ -45,6 +45,12 @@ jobs:
           release-summary: "Check the release notes for more information."
           release-url: ${{ inputs.release-url || env.RELEASE_URL }}
           cache: true
+      - name: 🚚 Move generated files to output
+        run: |
+          mkdir -p output/${{ matrix.file }}
+          mv ${{ steps.esphome-build.outputs.name }}/* output/${{ matrix.file }}
+          echo ${{ steps.esphome-build.outputs.version }} > output/${{ matrix.file }}/version
+          echo ${{ steps.esphome-build.outputs.project-version }} > output/${{ matrix.file }}/project-version
       - name: ⬆️ Upload firmware / device artifact
         uses: actions/upload-artifact@v4.4.3
         with:
