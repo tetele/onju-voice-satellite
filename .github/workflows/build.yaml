@@ -15,9 +15,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-env:
-  RELEASE_URL: ${{ github.server_url }}/${{ github.repository }}/releases/latest
-
 jobs:
   build:
     name: Build firmware
@@ -27,7 +24,7 @@ jobs:
         esphome/onju-voice.yaml
         esphome/onju-voice-microwakeword.yaml
       release-summary: "Check the release notes for more information."
-      release-url: ${{ env.RELEASE_URL }}
+      release-url: ${{ github.server_url }}/${{ github.repository }}/releases/latest
 
   consolidate:
     name: Consolidate firmwares 🚀
