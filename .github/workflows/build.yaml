@@ -1,0 +1,53 @@
+---
+name: Build firmware
+
+on:
+  # push:
+  #   branches:
+  #     - main
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      release-url:
+        required: true
+        type: string
+#   release:
+#     types: [published]
+
+concurrency:
+  # yamllint disable-line rule:line-length
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  RELEASE_URL: ${{ github.server_url }}/${{ github.repository }}/releases/latest
+
+jobs:
+  build:
+    name: Building ${{ matrix.file }}
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 3
+      matrix:
+        file:
+          - onju-voice
+          - onju-voice-microwakeword
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v4.2.2
+      - name: 🔨 Build firmware
+        uses: esphome/build-action@v4.0.3
+        id: esphome-build
+        with:
+          yaml-file: ${{ matrix.file }}.yaml
+          version: latest
+          release-summary: "Check the release notes for more information."
+          release-url: ${{ inputs.release-url || env.RELEASE_URL }}
+          cache: true
+      - name: ⬆️ Upload firmware / device artifact
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: ${{ matrix.file }}
+          path: output
+          retention-days: 1
