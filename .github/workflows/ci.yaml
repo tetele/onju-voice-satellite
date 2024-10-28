@@ -3,6 +3,9 @@ name: CI
 
 on:
   pull_request:
+  # Every Monday at 4:00 UTC
+  schedule:
+    - cron: "0 4 * * 1"
 
 concurrency:
   # yamllint disable-line rule:line-length
@@ -30,5 +33,5 @@ jobs:
       - name: 🔨 ESPHome ${{ matrix.esphome-version }}
         uses: esphome/build-action@v4.0.1
         with:
-          yaml-file: ${{ matrix.file }}.yaml
+          yaml-file: esphome/${{ matrix.file }}.yaml
           version: ${{ matrix.esphome-version }}
