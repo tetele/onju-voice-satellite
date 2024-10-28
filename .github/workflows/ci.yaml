@@ -1,0 +1,34 @@
+---
+name: CI
+
+on:
+  pull_request:
+
+concurrency:
+  # yamllint disable-line rule:line-length
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Building ${{ matrix.file }} / ${{ matrix.esphome-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        file:
+          - onju-voice
+          - onju-voice-microwakeword
+        esphome-version:
+          - latest
+          - beta
+          - dev
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v4.2.2
+      - name: 🔨 ESPHome ${{ matrix.esphome-version }}
+        uses: esphome/build-action@v4.0.1
+        with:
+          yaml-file: ${{ matrix.file }}.yaml
+          version: ${{ matrix.esphome-version }}
