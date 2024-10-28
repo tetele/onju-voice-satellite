@@ -51,9 +51,43 @@ jobs:
           mv ${{ steps.esphome-build.outputs.name }}/* output/${{ matrix.file }}
           echo ${{ steps.esphome-build.outputs.version }} > output/${{ matrix.file }}/version
           echo ${{ steps.esphome-build.outputs.project-version }} > output/${{ matrix.file }}/project-version
+      - name: Display the generated files
+        run: ls -R output
       - name: ⬆️ Upload firmware / device artifact
         uses: actions/upload-artifact@v4.4.3
         with:
-          name: ${{ matrix.file }}
+          name: build-${{ steps.esphome-build.outputs.name }}
           path: output
+          retention-days: 1
+
+  consolidate:
+    name: Consolidate manifests
+    runs-on: ubuntu-latest
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: onju-voice
+            name: Onju Voice
+          - project: onju-voice-microwakeword
+            name: Onju Voice Microwakeword
+    steps:
+      - name: ⤵️ Download artifacts
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: build-*
+          merge-multiple: true
+          path: files
+      - name: 🔨 Generate combined manifest.json
+        run: |
+          version=$(cat files/*/project_version | sort -V | tail -n 1)
+          jq -s --arg version "$version" '{"name": "${{ matrix.name }}", "version": $version, "home_assistant_domain": "esphome", "builds":.}' files/*/manifest.json > files/manifest.json
+      - name: 🧪 Display structure of job
+        run: ls -R
+      - name: ⬆️ Upload project artifact
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: ${{ matrix.project }}
+          path: files
           retention-days: 1
