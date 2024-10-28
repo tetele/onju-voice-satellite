@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   ci:
-    name: Building ${{ matrix.file }} / ${{ matrix.esphome-version }}
+    name: ${{ matrix.file }} / ${{ matrix.esphome-version }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -30,7 +30,7 @@ jobs:
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v4.2.2
-      - name: 🔨 ESPHome ${{ matrix.esphome-version }}
+      - name: 🔨 Build firmware - ${{ matrix.esphome-version }}
         uses: esphome/build-action@v4.0.1
         with:
           yaml-file: esphome/${{ matrix.file }}.yaml
