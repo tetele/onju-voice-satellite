@@ -1,6 +1,5 @@
 import Head from "@docusaurus/Head";
 import React from "react";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 
 /**
  * Extend JSX.IntrinsicElements to include the custom element
@@ -27,8 +26,11 @@ const loadEspWebToolsScript = () => (
   />
 );
 
-export default function ESPHomeButton() {
-  const manifestUrl = useBaseUrl("/onju-voice/manifest.json");
+interface ESPHomeButtonProps {
+  manifestUrl: string;
+}
+
+export default function ESPHomeButton({ manifestUrl }: ESPHomeButtonProps) {
   return (
     <>
       <Head>{loadEspWebToolsScript()}</Head>

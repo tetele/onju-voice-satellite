@@ -4,10 +4,8 @@ title: Getting Started
 description: 'Instructions how to get started with the Onju Voice Satellite'
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
 import ESPHomeButton from '@site/src/components/ESPWebTools';
-import { faUsb } from '@fortawesome/free-brands-svg-icons';
+import FirmwareInstallTabs from '@site/src/components/FirmwareInstallTabs';
 
 # Get started
 
@@ -15,34 +13,11 @@ This guide will walk you through the steps needed to set up your Onju Voice PCB 
 
 ## Step 1 - Install firmware
 
-Use the method below to provide your Onju Voice PCB with the correct firmware.
-
-<Tabs>
-  <TabItem value="usb" label={<><icon icon={faUsb} size="lg"/> USB</>}>
+Use the method below to provide your Onju Voice PCB with the correct firmware. Please note that you can use the tabs to select which firmware version you want to install.
 
 _Make sure this page is opened in a Chromium-based browser on a desktop. The software installation does not work with a tablet or phone._
 
-1. Press the blue **connect** button below, a pop-up window will appear with a list of available USB devices.
-2. Hold down the `BOOT` button on the Onju Voice PCB ans connect a USB cable.
-    - _Note_: this prevents the device from reconnecting repeatedly.
-3. In the pop-up window, a new entry should appear. Select this USB serial port and click **Connect**.
-4. Choose **Install Onju Voice Satellite**, then click **Install**.
-5. After installation, click **Next**.
-    - _Note_: since the device is still in BOOT mode, you'll return to a previous pop-up window.
-6. Refresh the browser page.
-7. Press the `RST` button on the Onju Voice PCB and repeat steps 1 and 3 to reconnect to the device.
-8. In the pop-up window, choose **Connect to Wi-Fi**.
-    - Add the Onju Voice Satellite to your Wi-Fi network:
-      - Select your network from the list and enter the credentials for your 2.4 GHz Wi-Fi network.
-      - Click **Connect**.
-      - The Onju Voice Satellite is now connected to your network.
-    - _note_: If you wait to long, the option to connect to Wi-Fi disappears. In that case, repeat step 6 - 8.
-9. Congratulations 🎉 You have successfully installed the firmware on your Onju Voice Satellite.
-    - The LEDs on the Onju Voice PCB should now be blinking green.
-
-  <ESPHomeButton />
-  </TabItem>
-</Tabs>
+<FirmwareInstallTabs />
 
 ## Step 2 - Replace PCB in Google Nest Mini
 
