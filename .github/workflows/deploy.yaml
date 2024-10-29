@@ -28,7 +28,6 @@ jobs:
       files: |
         esphome/onju-voice.yaml
       esphome-version: latest
-      combined-name: firmware
       release-summary: "Check the release notes for more information."
       release-url: ${{ github.event_name == 'release' && github.event.release.html_url || (github.event_name == 'workflow_dispatch' && inputs.release-url) || '' }}
       release-version: ${{ (github.event_name == 'release' && github.event.release.tag_name) || (github.event_name == 'workflow_dispatch' && inputs.version) || '' }}
@@ -55,30 +54,42 @@ jobs:
           name: site
           path: docs/build
 
-  deploy:
-    name: Deploy
+  consolidate:
+    name: Consolidate firmwares
     runs-on: ubuntu-latest
     needs:
       - build-firmware
       - build-docs
-    permissions:
-      pages: write
-      id-token: write
-    # environment:
-    #   name: github-pages
-    #   url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: ⬇️ Download documentation artifact
         uses: actions/download-artifact@v4.1.8
         with:
-          name: site
-      - name: ⬇️ Download firmware artifacts
-        uses: actions/download-artifact@v4.1.8
-        with:
-          name: firmware
-          path: firmware
+          path: firmwares
       - name: Display firmware artifacts
         run: ls -lR
-      # - name: 🚀 Deploy to Github Pages
-      #   uses: actions/deploy-pages@v4.0.5
-      #   id: deployment
+
+  # deploy:
+  #   name: Deploy
+  #   runs-on: ubuntu-latest
+  #   needs: consolidate
+  #   permissions:
+  #     pages: write
+  #     id-token: write
+  #   # environment:
+  #   #   name: github-pages
+  #   #   url: ${{ steps.deployment.outputs.page_url }}
+  #   steps:
+  #     - name: ⬇️ Download documentation artifact
+  #       uses: actions/download-artifact@v4.1.8
+  #       with:
+  #         name: site
+  #     - name: ⬇️ Download firmware artifacts
+  #       uses: actions/download-artifact@v4.1.8
+  #       with:
+  #         name: firmware
+  #         path: firmware
+  #     - name: Display firmware artifacts
+  #       run: ls -lR
+  #     # - name: 🚀 Deploy to Github Pages
+  #     #   uses: actions/deploy-pages@v4.0.5
+  #     #   id: deployment
