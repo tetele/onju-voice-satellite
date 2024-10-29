@@ -81,44 +81,39 @@ jobs:
           done
       - name: 🧪 Display firmware artifacts
         run: ls -lR
-      - name: Move firmware files to docs
+      - name: 🗂️ Move firmware files to docs
         run: |
           mkdir output
           cp -R site/* output/
-          cp -R firmwares/* output/
-      - name: Move manifest files to root and modify paths
-        run: |
-          for device in firmwares/*; do
-            device=$(basename $device)
-            jq --arg device "$device" \
-                '.builds[].ota.path |= $device + "/" + . | (.builds[].parts // [])[].path |= $device + "/" + .' \
-                firmwares/$device/manifest.json > output/$device-manifest.json
-          done
+          cp -R firmwares/* output/firmware/
+      # - name: Move manifest files to root and modify paths
+      #   run: |
+      #     for device in firmwares/*; do
+      #       device=$(basename $device)
+      #       jq --arg device "$device" \
+      #           '.builds[].ota.path |= $device + "/" + . | (.builds[].parts // [])[].path |= $device + "/" + .' \
+      #           firmwares/$device/manifest.json > output/$device-manifest.json
+      #     done
       - name: 🧪 Display firmware artifacts
         run: ls -lR
+      - name: ⬆️ Upload pages artifacts
+        uses: actions/upload-pages-artifact@v3.0.1
+        with:
+          path: output
 
-  # deploy:
-  #   name: Deploy
-  #   runs-on: ubuntu-latest
-  #   needs: consolidate
-  #   permissions:
-  #     pages: write
-  #     id-token: write
-  #   # environment:
-  #   #   name: github-pages
-  #   #   url: ${{ steps.deployment.outputs.page_url }}
-  #   steps:
-  #     - name: ⬇️ Download documentation artifact
-  #       uses: actions/download-artifact@v4.1.8
-  #       with:
-  #         name: site
-  #     - name: ⬇️ Download firmware artifacts
-  #       uses: actions/download-artifact@v4.1.8
-  #       with:
-  #         name: firmware
-  #         path: firmware
-  #     - name: Display firmware artifacts
-  #       run: ls -lR
-  #     # - name: 🚀 Deploy to Github Pages
-  #     #   uses: actions/deploy-pages@v4.0.5
-  #     #   id: deployment
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: consolidate
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 🏗️ Setup Github Pages
+        uses: actions/configure-pages@v5.0.0
+      - name: 🚀 Deploy to Github Pages
+        uses: actions/deploy-pages@v4.0.5
+        id: deployment
