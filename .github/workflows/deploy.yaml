@@ -68,7 +68,7 @@ jobs:
       - name: ⬇️ Download firmware artifacts
         uses: actions/download-artifact@v4.1.8
         with:
-          name: onju-voice*
+          pattern: onju-voice*
           path: firmwares
       - name: 🧹 Remove intermediate version folder
         run: |-
@@ -77,6 +77,21 @@ jobs:
               mv $d/* $d/../
               rm -rf $d
             fi
+          done
+      - name: 🧪 Display firmware artifacts
+        run: ls -lR
+      - name: Move firmware files to docs
+        run: |
+          mkdir output
+          cp -R site/* output/
+          cp -R firmwares/* output/
+      - name: Move manifest files to root and modify paths
+        run: |
+          for device in firmwares/*; do
+            device=$(basename $device)
+            jq --arg device "$device" \
+                '.builds[].ota.path |= $device + "/" + . | (.builds[].parts // [])[].path |= $device + "/" + .' \
+                firmwares/$device/manifest.json > output/$device-manifest.json
           done
       - name: 🧪 Display firmware artifacts
         run: ls -lR
