@@ -1,0 +1,49 @@
+---
+name: Deploy
+
+on:
+  # push:
+  #   branches:
+  #     - main
+  pull_request:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The version of the firmware to build"
+        required: true
+        type: string
+      release-url:
+        description: "Release URL"
+        required: true
+        type: string
+
+jobs:
+  build-firmware:
+    name: Build Firmware
+    uses: esphome/workflows/.github/workflows/build.yml@main
+    with:
+      # esphome/onju-voice-microwakeword.yaml
+      files: |
+        esphome/onju-voice.yaml
+      esphome-version: latest
+      release-summary: "Check the release notes for more information."
+      release-url: ${{ github.event_name == 'release' && github.event.release.html_url || (github.event_name == 'workflow_dispatch' && inputs.release-url) || '' }}
+      release-version: ${{ (github.event_name == 'release' && github.event.release.tag_name) || (github.event_name == 'workflow_dispatch' && inputs.version) || '' }}
+
+  build-docs:
+    name: Build documentation
+    runs-on: ubuntu-latest
+    needs: build-firmware
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v4.2.2
+      - name: ⬇️ Download all artifacts
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: firmware
+          path: firmware
+      - name: Display structure of job
+        run: ls -R
+      # - name: 🗂️ Move firmware folders to static
