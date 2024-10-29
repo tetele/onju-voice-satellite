@@ -79,23 +79,17 @@ jobs:
               rm -rf $d
             fi
           done
-      - name: 🧪 Display firmware artifacts
-        run: ls -lR
       - name: 🗂️ Move firmware files to docs
         run: |
           mkdir output
           cp -R site/* output/
           cp -R firmwares output/firmware/
-      # - name: Move manifest files to root and modify paths
-      #   run: |
-      #     for device in firmwares/*; do
-      #       device=$(basename $device)
-      #       jq --arg device "$device" \
-      #           '.builds[].ota.path |= $device + "/" + . | (.builds[].parts // [])[].path |= $device + "/" + .' \
-      #           firmwares/$device/manifest.json > output/$device-manifest.json
-      #     done
-      - name: 🧪 Display firmware artifacts
-        run: ls -lR
+      # - name: 🧪 Display firmware artifacts
+      #   run: ls -lR
+      - name: 🧹 Remove documentation artifact
+        uses: geekyeggo/delete-artifact@v5.1.0
+        with:
+          name: site
       - name: ⬆️ Upload pages artifacts
         uses: actions/upload-pages-artifact@v3.0.1
         with:

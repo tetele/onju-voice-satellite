@@ -1,6 +1,5 @@
 import Head from "@docusaurus/Head";
 import React from "react";
-import useBaseUrl from "@docusaurus/useBaseUrl";
 
 /**
  * Extend JSX.IntrinsicElements to include the custom element
