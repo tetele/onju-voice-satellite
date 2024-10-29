@@ -28,6 +28,7 @@ jobs:
       files: |
         esphome/onju-voice.yaml
       esphome-version: latest
+      combined-name: firmware
       release-summary: "Check the release notes for more information."
       release-url: ${{ github.event_name == 'release' && github.event.release.html_url || (github.event_name == 'workflow_dispatch' && inputs.release-url) || '' }}
       release-version: ${{ (github.event_name == 'release' && github.event.release.tag_name) || (github.event_name == 'workflow_dispatch' && inputs.version) || '' }}
@@ -35,7 +36,6 @@ jobs:
   build-docs:
     name: Build documentation
     runs-on: ubuntu-latest
-    needs: build-firmware
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v4.2.2
@@ -75,7 +75,7 @@ jobs:
       - name: ⬇️ Download firmware artifacts
         uses: actions/download-artifact@v4.1.8
         with:
-          name: output
+          name: firmware
           path: firmware
       - name: Display firmware artifacts
         run: ls -la
