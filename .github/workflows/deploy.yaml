@@ -55,7 +55,7 @@ jobs:
           path: docs/build
 
   consolidate:
-    name: Consolidate firmwares
+    name: Consolidate
     runs-on: ubuntu-latest
     needs:
       - build-firmware
@@ -85,7 +85,7 @@ jobs:
         run: |
           mkdir output
           cp -R site/* output/
-          cp -R firmwares/* output/firmware/
+          cp -R firmwares output/firmware/
       # - name: Move manifest files to root and modify paths
       #   run: |
       #     for device in firmwares/*; do
