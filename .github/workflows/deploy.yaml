@@ -64,8 +64,21 @@ jobs:
       - name: ⬇️ Download documentation artifact
         uses: actions/download-artifact@v4.1.8
         with:
+          name: site
+      - name: ⬇️ Download firmware artifacts
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: onju-voice*
           path: firmwares
-      - name: Display firmware artifacts
+      - name: 🧹 Remove intermediate version folder
+        run: |-
+          for d in firmwares/*/*; do
+            if [ -d "$d" ]; then
+              mv $d/* $d/../
+              rm -rf $d
+            fi
+          done
+      - name: 🧪 Display firmware artifacts
         run: ls -lR
 
   # deploy:
