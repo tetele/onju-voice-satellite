@@ -78,7 +78,7 @@ jobs:
           name: firmware
           path: firmware
       - name: Display firmware artifacts
-        run: ls -la
+        run: ls -lR
       # - name: 🚀 Deploy to Github Pages
       #   uses: actions/deploy-pages@v4.0.5
       #   id: deployment
