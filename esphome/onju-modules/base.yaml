@@ -1,0 +1,225 @@
+substitutions:
+  # Phases of the Voice Assistant
+  # The voice assistant is ready to be triggered by a wake word
+  voice_assist_idle_phase_id: "1"
+  # The voice assistant is waiting for a voice command (after being triggered by the wake word)
+  voice_assist_waiting_for_command_phase_id: "2"
+  # The voice assistant is listening for a voice command
+  voice_assist_listening_for_command_phase_id: "3"
+  # The voice assistant is currently processing the command
+  voice_assist_thinking_phase_id: "4"
+  # The voice assistant is replying to the command
+  voice_assist_replying_phase_id: "5"
+  # The voice assistant is not ready
+  voice_assist_not_ready_phase_id: "10"
+  # The voice assistant encountered an error
+  voice_assist_error_phase_id: "11"
+
+esphome:
+  name: "${name}"
+  friendly_name: "${friendly_name}"
+  comment: "${device_description}"
+  name_add_mac_suffix: true
+  project:
+    name: tetele.onju_voice_satellite
+    version: "${project_version}"
+  min_version: 2024.12.2
+  platformio_options:
+    board_build.flash_mode: dio
+    board_build.arduino.memory_type: qio_opi
+  on_boot:
+    priority: 375
+    then:
+      - script.execute: control_led
+      # If after 10 minutes, the device is still initializing (It did not yet connect to Home Assistant), turn off the init_in_progress variable and run the script to refresh the LED status
+      - delay: 10min
+      - if:
+          condition:
+            lambda: return id(init_in_progress);
+          then:
+            - lambda: id(init_in_progress) = false;
+            - script.execute: control_led
+
+esp32:
+  board: esp32-s3-devkitc-1
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+    version: recommended
+    sdkconfig_options:
+      # need to set a s3 compatible board for the adf-sdk to compile
+      # board specific code is not used though
+      CONFIG_ESP32_S3_BOX_BOARD: "y"
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+# Enable logging
+logger:
+
+# Allow OTA updates
+ota:
+  platform: esphome
+
+# Allow provisioning Wi-Fi via serial
+improv_serial:
+
+wifi:
+  id: wifi_id
+  # Set up a wifi access point
+  ap:
+    ssid: "${friendly_name}"
+  on_connect:
+    - lambda: id(improv_ble_in_progress) = false;
+    - script.execute: control_led
+  on_disconnect:
+    - script.execute: control_led
+
+# In combination with the `ap` this allows the user
+# to provision wifi credentials to the device via WiFi AP.
+captive_portal:
+
+api:
+  # TODO
+  id: api_id
+  on_client_connected:
+    - script.execute: control_led
+  on_client_disconnected:
+    - script.execute: control_led
+
+globals:
+  - id: init_in_progress
+    type: bool
+    restore_value: no
+    initial_value: "true"
+  - id: improv_ble_in_progress
+    type: bool
+    restore_value: no
+    initial_value: "false"
+  - id: voice_assistant_phase
+    type: int
+    restore_value: no
+    initial_value: ${voice_assist_idle_phase_id}
+  - id: volume_touched
+    type: bool
+    restore_value: no
+    initial_value: "false"
+
+script:
+  - id: control_led
+    mode: restart
+    then:
+      - lambda: |
+          // TODO
+          // id(check_if_timers_active).execute();
+          // if (id(is_timer_active)){
+          //   id(fetch_first_active_timer).execute();
+          // }
+          if (id(improv_ble_in_progress)) {
+            ESP_LOGD("control_led", "BLE in progress");
+            id(control_led_improv_ble_state).execute();
+          } else if (id(init_in_progress)) {
+            ESP_LOGD("control_led", "Init in progress");
+            id(control_led_init).execute();
+          } else if (!id(wifi_id).is_connected() || !id(api_id).is_connected()){
+            ESP_LOGD("control_led", "Wifi %sconnected, API %sconnected", (id(wifi_id).is_connected() ? "" : "not "), (id(api_id).is_connected() ? "" : "not "));
+            id(control_led_no_ha_connection_state).execute();
+          } else if (id(action).state) {
+            ESP_LOGD("control_led", "Top touchpad pressed");
+            id(control_led_center_button_touched).execute();
+          } else if (id(volume_touched)) {
+            ESP_LOGD("control_led", "Volume touchpad pressed");
+            id(control_led_volume_touched).execute();
+
+          } else if (id(voice_assistant_phase) == ${voice_assist_waiting_for_command_phase_id}) {
+            ESP_LOGD("control_led", "VA: waiting for command");
+            id(control_led_voice_assistant_waiting_for_command_phase).execute();
+          } else if (id(voice_assistant_phase) == ${voice_assist_listening_for_command_phase_id}) {
+            ESP_LOGD("control_led", "VA: listening for command");
+            id(control_led_voice_assistant_listening_for_command_phase).execute();
+          } else if (id(voice_assistant_phase) == ${voice_assist_thinking_phase_id}) {
+            ESP_LOGD("control_led", "VA: thinking");
+            id(control_led_voice_assistant_thinking_phase).execute();
+          } else if (id(voice_assistant_phase) == ${voice_assist_replying_phase_id}) {
+            ESP_LOGD("control_led", "VA: replying");
+            id(control_led_voice_assistant_replying_phase).execute();
+          } else if (id(voice_assistant_phase) == ${voice_assist_error_phase_id}) {
+            ESP_LOGD("control_led", "VA: error");
+            id(control_led_voice_assistant_error_phase).execute();
+          } else if (id(voice_assistant_phase) == ${voice_assist_not_ready_phase_id}) {
+            ESP_LOGD("control_led", "VA: not ready");
+            id(control_led_voice_assistant_not_ready_phase).execute();
+
+          } else if (id(voice_assistant_phase) == ${voice_assist_idle_phase_id}) {
+            ESP_LOGD("control_led", "VA: idle");
+            id(control_led_voice_assistant_idle_phase).execute();
+
+          } else {
+            ESP_LOGD("control_led", "Device idle");
+            id(control_led_idle).execute();
+          }
+    # /*
+    # } else if (id(timer_ringing).state) {
+    #   id(control_led_timer_ringing).execute();
+
+    # voice stuff
+
+    # } else if (id(is_timer_active)) {
+    #   id(control_led_timer_ticking).execute();
+    # } else if (id(master_mute_switch).state) {
+    #   id(control_led_muted_or_silent).execute();
+    # } else if (id(nabu_media_player).volume == 0.0f || id(nabu_media_player).is_muted()) {
+    #   id(control_led_muted_or_silent).execute();
+    # }
+    # //*/
+
+  - id: control_led_init
+    then: []
+
+  - id: control_led_improv_ble_state
+    then: []
+
+  - id: control_led_no_ha_connection_state
+    then: []
+
+  - id: control_led_center_button_touched
+    then: []
+
+  - id: control_led_volume_touched
+    then:
+      - lambda: |
+          id(volume_touched) = false;
+
+  - id: control_led_voice_assistant_waiting_for_command_phase
+    then: []
+
+  - id: control_led_voice_assistant_listening_for_command_phase
+    then: []
+
+  - id: control_led_voice_assistant_thinking_phase
+    then: []
+
+  - id: control_led_voice_assistant_replying_phase
+    then: []
+
+  - id: control_led_voice_assistant_error_phase
+    then: []
+
+  - id: control_led_voice_assistant_not_ready_phase
+    then: []
+
+  - id: control_led_voice_assistant_idle_phase
+    then: []
+
+  - id: control_led_idle
+    then: []
+
+button:
+  - platform: factory_reset
+    id: factory_reset_button
+    name: "Factory Reset"
+    entity_category: diagnostic
+
+  - platform: restart
+    name: "Restart"
