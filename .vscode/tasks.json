@@ -1,0 +1,69 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run dashboard",
+            "type": "shell",
+            "command": "esphome",
+            "args": [
+                "dashboard",
+                "/config"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Compile current config",
+            "type": "shell",
+            "command": "esphome",
+            "args": [
+                "compile",
+                "/config/${fileBasename}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Upload current config",
+            "type": "shell",
+            "command": "esphome",
+            "args": [
+                "upload",
+                "--device",
+                "${input:serial_port}",
+                "/config/${fileBasename}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Upload current config and start logs",
+            "type": "shell",
+            "command": "esphome upload --device ${input:serial_port} /config/${fileBasename} && esphome logs --device ${input:serial_port} /config/${fileBasename}",
+            "problemMatcher": []
+        },
+        {
+            "label": "Start logs for current config",
+            "type": "shell",
+            "command": "esphome",
+            "args": [
+                "logs",
+                "--device",
+                "${input:serial_port}",
+                "/config/${fileBasename}"
+            ],
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "serial_port",
+            "type": "command",
+            "command": "shellCommand.execute",
+            "args": {
+                // gets all handlers which match /dev/ttyACM* via sed 's/^\(.*\)\(/dev/tty.*\)$/\2/g' -
+                "command": "ls -la /dev/ttyACM* | sed 's/^\\(.*\\)\\(\\/dev\\/tty.*\\)$/\\2/g' -",
+                "description": "Select the USB port to upload to"
+            }
+        }
+    ]
+}

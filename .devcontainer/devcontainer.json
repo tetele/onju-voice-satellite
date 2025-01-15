@@ -15,7 +15,7 @@
     "-e",
     "ESPHOME_DASHBOARD_USE_PING=1"
     // uncomment and edit the path in order to pass though local USB serial to the conatiner
-    // , "--device=/dev/ttyACM0"
+    , "--device=/dev/ttyACM0"
   ],
   "appPort": 6052,
   // if you are using avahi in the host device, uncomment these to allow the
@@ -32,7 +32,9 @@
         // yaml
         "redhat.vscode-yaml",
         // editorconfig
-        "editorconfig.editorconfig"
+        "editorconfig.editorconfig",
+        // shellcommand.execute
+        "augustocdias.tasks-shell-input"
       ],
       "settings": {
         "editor.formatOnPaste": false,
