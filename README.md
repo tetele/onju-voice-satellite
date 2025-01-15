@@ -1,3 +1,5 @@
+# :warning: THIS BRANCH IS A WORK IN PROGRESS AND SHOULD NOT BE USED :warning:
+
 # Onju Voice satellite
 
 Ever since voice satellites [were introduced](https://www.home-assistant.io/blog/2023/04/27/year-of-the-voice-chapter-2/#composing-voice-assistants) to [Home Assistant](https://www.home-assistant.io/), people wanted to use good microphones and speakers for this purpose, but not many were really available.
