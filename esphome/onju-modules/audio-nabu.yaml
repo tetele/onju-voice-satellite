@@ -1,0 +1,81 @@
+packages:
+  onju_microphone: !include microphone.yaml
+  onju_media_player: !include media_player.yaml
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/esphome/home-assistant-voice-pe
+      ref: dev
+    components:
+      - media_player
+      - microphone
+      - nabu
+      - nabu_microphone
+i2s_audio:
+  - id: i2s_output
+    i2s_lrclk_pin:
+      number: GPIO13
+      allow_other_uses: true
+    i2s_bclk_pin:
+      number: GPIO18
+      allow_other_uses: true
+
+  - id: i2s_input
+    i2s_lrclk_pin:
+      number: GPIO13
+      allow_other_uses: true
+    i2s_bclk_pin:
+      number: GPIO18
+      allow_other_uses: true
+
+speaker:
+  - platform: i2s_audio
+    sample_rate: 16000
+    i2s_mode: primary
+    i2s_dout_pin: GPIO12
+    bits_per_sample: 32bit
+    i2s_audio_id: i2s_output
+    dac_type: external
+    channel: stereo
+    timeout: never
+    buffer_duration: 100ms
+
+microphone:
+  - id: !remove onju_microphone
+  - platform: nabu_microphone
+    i2s_din_pin: GPIO17
+    adc_type: external
+    pdm: false
+    sample_rate: 16000
+    bits_per_sample: 32bit
+    i2s_mode: primary
+    i2s_audio_id: i2s_input
+    channel_0:
+      id: onju_microphone
+      amplify_shift: 2
+    channel_1:
+      id: comm_mic
+      amplify_shift: 2
+
+media_player:
+  - id: !extend onju_out
+    platform: nabu
+    speaker:
+    sample_rate: 16000
+    volume_increment: 0.05
+    volume_min: 0.4
+    volume_max: 0.85
+    files:
+      - id: wake_word_triggered_sound
+        file: ${wakeup_sound_url}
+
+switch:
+  # TODO
+  - platform: gpio
+    id: dac_mute
+    name: DAC mute
+    restore_mode: ALWAYS_OFF
+    pin:
+      number: GPIO21
+      inverted: True

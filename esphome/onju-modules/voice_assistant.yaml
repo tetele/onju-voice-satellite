@@ -1,0 +1,62 @@
+globals:
+  - id: !extend voice_assistant_phase
+    initial_value: ${voice_assist_not_ready_phase_id} # used to make the leds not blink when the va component is not loaded
+
+api:
+  services:
+    - service: start_va
+      then:
+        - voice_assistant.start
+    - service: stop_va
+      then:
+        - voice_assistant.stop
+
+voice_assistant:
+  id: va
+  microphone: onju_microphone
+  use_wake_word: false
+  # TODO
+  on_listening:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_waiting_for_command_phase_id};
+    - script.execute: control_led
+  on_stt_vad_start:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_listening_for_command_phase_id};
+    - script.execute: control_led
+  on_stt_vad_end:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_thinking_phase_id};
+    - script.execute: control_led
+  on_tts_start:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_replying_phase_id};
+    - script.execute: control_led
+  on_client_connected:
+    - lambda: id(init_in_progress) = false;
+    - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
+    - script.execute: control_led
+  on_client_disconnected:
+    - voice_assistant.stop:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_not_ready_phase_id};
+    - script.execute: control_led
+  on_error:
+    - if:
+        condition:
+          and:
+            - lambda: return !id(init_in_progress);
+            - lambda: return code != "duplicate_wake_up_detected";
+        then:
+          - lambda: id(voice_assistant_phase) = ${voice_assist_error_phase_id};
+          - script.execute: control_led
+
+script:
+  - id: turn_on_wake_word
+    then: []
+  - id: turn_off_wake_word
+    then: []
+
+
+# TODO
+binary_sensor:
+  - id: !extend mute_switch
+    on_press:
+      - script.execute: turn_off_wake_word
+    on_release:
+      - script.execute: turn_on_wake_word
