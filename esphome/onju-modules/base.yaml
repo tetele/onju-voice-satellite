@@ -225,8 +225,8 @@ script:
 
   - id: control_led_volume_touched
     then:
-      - lambda: |
-          id(volume_touched) = false;
+      - lambda: id(volume_touched) = false;
+      - script.execute: control_led
 
   - id: control_led_voice_assistant_waiting_for_command_phase
     then: []
