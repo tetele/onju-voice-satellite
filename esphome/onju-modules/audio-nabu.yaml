@@ -79,3 +79,25 @@ switch:
     pin:
       number: GPIO21
       inverted: True
+
+script:
+  - id: play_sound
+    parameters:
+      priority: bool
+      sound_file: "media_player::MediaFile*"
+    then:
+      - lambda: |-
+          if (priority) {
+            id(onju_out)
+              ->make_call()
+              .set_command(media_player::MediaPlayerCommand::MEDIA_PLAYER_COMMAND_STOP)
+              .set_announcement(true)
+              .perform();
+          }
+          if ( (id(onju_out).state != media_player::MediaPlayerState::MEDIA_PLAYER_STATE_ANNOUNCING ) || priority) {
+            id(onju_out)
+              ->make_call()
+              .set_announcement(true)
+              .set_local_media_file(sound_file)
+              .perform();
+          }
