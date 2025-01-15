@@ -70,8 +70,8 @@ binary_sensor:
       max_consecutive_anomalies: 10
 
   - platform: gpio
-    id: mute_switch
+    id: hardware_mute_switch
     pin:
       number: GPIO38
       mode: INPUT_PULLUP
-    name: Disable microphone
+    internal: true

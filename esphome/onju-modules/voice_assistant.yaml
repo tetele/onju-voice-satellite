@@ -52,11 +52,41 @@ script:
   - id: turn_off_wake_word
     then: []
 
-
-# TODO
 binary_sensor:
-  - id: !extend mute_switch
+  - id: !extend hardware_mute_switch
     on_press:
-      - script.execute: turn_off_wake_word
+      - switch.template.publish:
+          id: mute_switch
+          state: ON
     on_release:
-      - script.execute: turn_on_wake_word
+      - switch.template.publish:
+          id: mute_switch
+          state: OFF
+
+switch:
+  - id: mute_switch
+    platform: template
+    name: Mute
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: "mdi:microphone-off"
+    entity_category: config
+    turn_on_action:
+      - if:
+          condition:
+            binary_sensor.is_off: hardware_mute_switch
+          then:
+            - switch.template.publish:
+                id: mute_switch
+                state: ON
+    turn_off_action:
+      - if:
+          condition:
+            binary_sensor.is_off: hardware_mute_switch
+          then:
+            - switch.template.publish:
+                id: mute_switch
+                state: OFF
+    on_turn_on:
+      - script.execute: control_led
+    on_turn_off:
+      - script.execute: control_led
