@@ -1,0 +1,27 @@
+packages:
+  onju_voice_assistant: !include voice_assistant.yaml
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/tetele/home-assistant-voice-pe
+      ref: fix-mww-guarding
+    components:
+      - voice_assistant
+    # refresh: 0s
+
+voice_assistant:
+  microphone: onju_microphone
+  media_player: onju_out
+  use_wake_word: false
+  noise_suppression_level: 0
+  auto_gain: 0 dbfs
+  volume_multiplier: 1
+  on_start:
+    - nabu.set_ducking:
+        decibel_reduction: 20 # Number of dB quieter; higher implies more quiet, 0 implies full volume
+        duration: 0.0s # The duration of the transition (default is 0)
+  on_end:
+    - nabu.set_ducking:
+        decibel_reduction: 0 # 0 dB means no reduction
+        duration: 1.0s

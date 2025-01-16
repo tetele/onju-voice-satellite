@@ -1,0 +1,77 @@
+packages:
+  onju_voice_assistant: !include voice_assistant-nabu.yaml
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/esphome/home-assistant-voice-pe
+      ref: dev
+    components:
+      - micro_wake_word
+
+micro_wake_word:
+  id: mww
+  models:
+    - model: https://github.com/kahrendt/microWakeWord/releases/download/okay_nabu_20241226.3/okay_nabu.json
+      id: okay_nabu
+    - model: hey_jarvis
+      id: hey_jarvis
+    - model: hey_mycroft
+      id: hey_mycroft
+    - model: https://github.com/kahrendt/microWakeWord/releases/download/stop/stop.json
+      id: stop
+      internal: true
+  vad:
+  microphone: mww_microphone
+  on_wake_word_detected:
+    # If the wake word is detected when the device is muted (Possible with the software mute switch): Do nothing
+    - if:
+        condition:
+          switch.is_off: mute_switch
+        then:
+          - if:
+              condition:
+                lambda: return id(onju_out)->state == media_player::MediaPlayerState::MEDIA_PLAYER_STATE_ANNOUNCING;
+              then:
+                lambda: |-
+                  id(onju_out)
+                    ->make_call()
+                    .set_command(media_player::MediaPlayerCommand::MEDIA_PLAYER_COMMAND_STOP)
+                    .set_announcement(true)
+                    .perform();
+              else:
+                - if:
+                    condition:
+                      switch.is_on: wake_sound
+                    then:
+                      - script.execute:
+                          id: play_sound
+                          priority: true
+                          sound_file: !lambda return id(wake_word_triggered_sound);
+                      - delay: 300ms
+                - voice_assistant.start:
+                    wake_word: !lambda return wake_word;
+
+voice_assistant:
+  micro_wake_word: mww
+  on_client_connected:
+    - script.execute: turn_on_wake_word
+
+# TODO
+script:
+  - id: !extend turn_on_wake_word
+    then:
+      - micro_wake_word.start
+
+  - id: !extend turn_off_wake_word
+    then:
+      - micro_wake_word.stop
+
+switch:
+  - platform: template
+    id: wake_sound
+    name: Wake sound
+    icon: "mdi:bullhorn"
+    entity_category: config
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON

@@ -1,0 +1,18 @@
+esp32_ble:
+  name: onju-voice
+
+esp32_improv:
+  authorizer: action
+  on_start:
+    - lambda: id(improv_ble_in_progress) = true;
+    - script.execute: control_led
+  on_provisioned:
+    - lambda: id(improv_ble_in_progress) = false;
+    - script.execute: control_led
+  on_stop:
+    - lambda: id(improv_ble_in_progress) = false;
+    - script.execute: control_led
+
+wifi:
+  on_disconnect:
+    - ble.enable:

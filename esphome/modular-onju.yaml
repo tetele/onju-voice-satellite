@@ -1,0 +1,40 @@
+substitutions:
+  name: "onju-voice"
+  friendly_name: "Onju Voice Satellite"
+  project_version: "2.0.0-b0"
+  device_description: "Onju Voice Satellite with ESPHome software and microWakeWord"
+
+packages:
+  onju_base: !include onju-modules/base.yaml
+  onju_ble_improv: !include onju-modules/ble_improv.yaml
+  onju_leds: !include onju-modules/leds.yaml
+  onju_controls: !include onju-modules/controls.yaml
+  # audio_gnumpi: !include onju-modules/audio-gnumpi.yaml
+  audio_nabu: !include onju-modules/audio-nabu.yaml
+  # onju_va_mww: !include onju-modules/micro_wake_word.yaml
+  onju_mww_nabu: !include onju-modules/micro_wake_word-nabu.yaml
+
+# TEMP https://discord.com/channels/429907082951524364/1324733194980950106
+esp32:
+  framework:
+    version: 4.4.8
+    platform_version: 5.4.0
+
+binary_sensor:
+  - id: !extend action
+    on_click:
+      then:
+        - logger.log:
+            tag: "action_click"
+            format: "Voice assistant is running: %s"
+            args: ['id(va).is_running() ? "yes" : "no"']
+        - if:
+            condition: media_player.is_playing
+            then:
+              - media_player.stop
+        - if:
+            condition: voice_assistant.is_running
+            then:
+              - voice_assistant.stop:
+            else:
+              - voice_assistant.start:

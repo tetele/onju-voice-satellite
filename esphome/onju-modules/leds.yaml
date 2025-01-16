@@ -1,0 +1,220 @@
+light:
+  - platform: esp32_rmt_led_strip
+    id: leds
+    pin: GPIO11
+    chipset: SK6812
+    num_leds: 6
+    rgb_order: GRB
+    rmt_channel: 0
+    default_transition_length: 0s
+    gamma_correct: 2.8
+
+  - platform: partition
+    id: left_led
+    segments:
+      - id: leds
+        from: 0
+        to: 0
+    default_transition_length: 100ms
+
+  - platform: partition
+    id: top_led
+    segments:
+      - id: leds
+        from: 1
+        to: 4
+    default_transition_length: 100ms
+    effects:
+      - pulse:
+          name: pulse
+          transition_length: 250ms
+          update_interval: 250ms
+      - pulse:
+          name: slow_pulse
+          transition_length: 1s
+          update_interval: 2s
+      - addressable_twinkle:
+          name: slow_twinkle
+          twinkle_probability: 1%
+      - addressable_twinkle:
+          name: twinkle
+          twinkle_probability: 7%
+      - addressable_twinkle:
+          name: fast_twinkle
+          twinkle_probability: 45%
+      - addressable_scan:
+          name: processing
+          move_interval: 80ms
+      - addressable_flicker:
+          name: speaking
+          intensity: 35%
+      - addressable_random_twinkle:
+          name: random_twinkle
+          twinkle_probability: 45%
+      - addressable_color_wipe:
+          name: swipe_right
+          colors:
+            - red: 100%
+              green: 100%
+              blue: 100%
+              num_leds: 1
+              gradient: true
+            - red: 0
+              green: 0
+              blue: 0
+              num_leds: 2
+              gradient: true
+            - red: 0
+              green: 0
+              blue: 0
+              num_leds: 3
+              gradient: false
+          add_led_interval: 100ms
+          reverse: false
+      - addressable_color_wipe:
+          name: swipe_right_fast
+          colors:
+            - red: 100%
+              green: 100%
+              blue: 100%
+              num_leds: 1
+              gradient: true
+            - red: 0
+              green: 0
+              blue: 0
+              num_leds: 2
+              gradient: true
+            - red: 0
+              green: 0
+              blue: 0
+              num_leds: 3
+              gradient: false
+          add_led_interval: 50ms
+          reverse: false
+      - addressable_color_wipe:
+          name: swipe_left
+          colors:
+            - red: 100%
+              green: 100%
+              blue: 100%
+              num_leds: 1
+              gradient: true
+            - red: 0
+              green: 0
+              blue: 0
+              num_leds: 2
+              gradient: true
+            - red: 0
+              green: 0
+              blue: 0
+              num_leds: 3
+              gradient: false
+          add_led_interval: 100ms
+          reverse: true
+
+  - platform: partition
+    id: right_led
+    segments:
+      - id: leds
+        from: 5
+        to: 5
+    default_transition_length: 100ms
+
+script:
+  - id: !extend control_led_init
+    then:
+      - if:
+          condition:
+            wifi.connected:
+          then:
+            - light.turn_on:
+                id: top_led
+                brightness: 66%
+                red: 9.4%
+                green: 73.3%
+                blue: 94.9%
+                effect: twinkle
+          else:
+            - light.turn_on:
+                id: top_led
+                brightness: 66%
+                red: 100%
+                green: 89%
+                blue: 71%
+                effect: twinkle
+
+  - id: !extend control_led_improv_ble_state
+    then:
+      - light.turn_on:
+          brightness: 66%
+          red: 100%
+          green: 89%
+          blue: 71%
+          id: top_led
+          effect: random_twinkle
+
+  - id: !extend control_led_no_ha_connection_state
+    then:
+      - light.turn_on:
+          brightness: 66%
+          red: 1
+          green: 0
+          blue: 0
+          id: top_led
+          effect: twinkle
+
+  - id: !extend control_led_voice_assistant_idle_phase
+    then:
+      - light.turn_off: top_led
+
+  - id: !extend control_led_voice_assistant_waiting_for_command_phase
+    then:
+      - light.turn_on:
+          brightness: 66%
+          id: top_led
+          effect: swipe_right
+
+  - id: !extend control_led_voice_assistant_listening_for_command_phase
+    then:
+      - light.turn_on:
+          brightness: 66%
+          id: top_led
+          effect: swipe_right_fast
+
+  - id: !extend control_led_voice_assistant_thinking_phase
+    then:
+      - light.turn_on:
+          brightness: 66%
+          id: top_led
+          effect: pulse
+
+  - id: !extend control_led_voice_assistant_replying_phase
+    then:
+      - light.turn_on:
+          brightness: 66%
+          id: top_led
+          effect: swipe_left
+
+  - id: !extend control_led_voice_assistant_error_phase
+    then:
+      - light.turn_on:
+          brightness: 33%
+          red: 1
+          green: 0
+          blue: 0
+          id: top_led
+          effect: pulse
+
+  - id: !extend control_led_voice_assistant_not_ready_phase
+    then:
+      - light.turn_on:
+          brightness: 33%
+          red: 1
+          green: 0
+          blue: 0
+          id: top_led
+          effect: fast_twinkle
+
+  - id: !extend control_led_idle
+    then:
+      - light.turn_off: top_led

@@ -1,0 +1,106 @@
+substitutions:
+  wakeup_sound_url: "https://github.com/tetele/onju-voice-satellite/raw/main/res/wakeup.mp3" # New Notification #7 by UNIVERSFIELD https://freesound.org/people/UNIVERSFIELD/sounds/736267/
+  error_sound_url: "https://github.com/tetele/onju-voice-satellite/raw/main/res/error.mp3" # Error #8 by UNIVERSFIELD https://freesound.org/people/UNIVERSFIELD/sounds/734442/
+  timer_finished_sound_url: "https://github.com/tetele/onju-voice-satellite/raw/main/res/timer_finished.mp3" # New Notification #6 by UNIVERSFIELD https://freesound.org/people/UNIVERSFIELD/sounds/734445/
+
+media_player:
+  - id: onju_out
+    name: None
+    on_state:
+      then:
+        - lambda: |-
+            static float old_volume = -1;
+            float new_volume = id(onju_out).volume;
+            if(abs(new_volume-old_volume) > 0.0001) {
+              if(old_volume != -1) {
+                id(volume_touched) = true;
+                id(control_led)->execute();
+              }
+            }
+            old_volume = new_volume;
+
+globals:
+
+light:
+  - id: !extend top_led
+    effects:
+      - addressable_lambda:
+          name: show_volume
+          update_interval: 50ms
+          lambda: |-
+            int int_volume = int(id(onju_out).volume * 100.0f * it.size());
+            int full_leds = int_volume / 100;
+            int last_brightness = int_volume % 100;
+            int i = 0;
+            for(; i < full_leds; i++) {
+              it[i] = Color::WHITE;
+            }
+            if(i < 4) {
+              it[i++] = Color(64, 64, 64).fade_to_white(last_brightness*256/100);
+            }
+            for(; i < it.size(); i++) {
+              it[i] = Color(64, 64, 64);
+            }
+
+script:
+  - id: set_volume
+    mode: restart
+    parameters:
+      volume: float
+    then:
+      - media_player.volume_set:
+          id: onju_out
+          volume: !lambda return clamp(id(onju_out).volume+volume, 0.0f, 1.0f);
+      - lambda: |
+          // Required for when volume is changed externally
+          id(volume_touched) = true;
+      - script.execute: control_led
+
+  - id: !remove control_led_volume_touched
+  - id: control_led_volume_touched
+    mode: restart
+    then:
+      - if:
+          condition:
+            lambda: "return id(volume_touched);"
+          then:
+            - light.turn_on:
+                id: top_led
+                effect: show_volume
+            - delay: 1s
+            - lambda: |
+                id(volume_touched) = false;
+            - script.execute: control_led
+
+binary_sensor:
+  - id: !extend volume_down
+    on_press:
+      then:
+        - script.execute:
+            id: set_volume
+            volume: -0.05
+        - delay: 750ms
+        - while:
+            condition:
+              binary_sensor.is_on: volume_down
+            then:
+              - script.execute:
+                  id: set_volume
+                  volume: -0.05
+              - delay: 150ms
+
+  - id: !extend volume_up
+    on_press:
+      then:
+        - script.execute:
+            id: set_volume
+            volume: 0.05
+        - delay: 750ms
+        - while:
+            condition:
+              binary_sensor.is_on: volume_up
+            then:
+              - script.execute:
+                  id: set_volume
+                  volume: 0.05
+              - delay: 150ms

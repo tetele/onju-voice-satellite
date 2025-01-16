@@ -1,0 +1,77 @@
+external_components:
+  - source: github://pr#7802 # Self calibration for ESP32 touch controls https://github.com/esphome/esphome/pull/7802
+    components: [esp32_touch]
+    # refresh: 0s
+
+esp32_touch:
+  setup_mode: false
+  sleep_duration: 2ms
+  measurement_duration: 800us
+  low_voltage_reference: 0.8V
+  high_voltage_reference: 2.4V
+
+  filter_mode: IIR_16
+  debounce_count: 2
+  noise_threshold: 0
+  jitter_step: 0
+  smooth_mode: IIR_2
+
+  denoise_grade: BIT8
+  denoise_cap_level: L0
+
+binary_sensor:
+  - platform: esp32_touch
+    id: volume_down
+    pin: GPIO4
+    threshold:
+      mode: dynamic
+      initial_value: 539000
+      lookback_num_values: 10
+      scan_interval: 1s
+      max_deviation: 0.5%
+      max_consecutive_anomalies: 10
+    on_press:
+      then:
+        - light.turn_on: left_led
+        - lambda: |
+            id(volume_touched) = true;
+    on_release:
+      then:
+        - light.turn_off: left_led
+
+  - platform: esp32_touch
+    id: volume_up
+    pin: GPIO2
+    threshold:
+      mode: dynamic
+      initial_value: 580000
+      lookback_num_values: 10
+      scan_interval: 1s
+      max_deviation: 0.5%
+      max_consecutive_anomalies: 10
+    on_press:
+      then:
+        - light.turn_on: right_led
+        - lambda: |
+            id(volume_touched) = true;
+    on_release:
+      then:
+        - light.turn_off: right_led
+
+  - platform: esp32_touch
+    id: action
+    pin: GPIO3
+    threshold:
+      mode: dynamic
+      initial_value: 751000
+      lookback_num_values: 10
+      scan_interval: 1s
+      max_deviation: 0.5%
+      max_consecutive_anomalies: 10
+
+  - platform: gpio
+    id: hardware_mute_switch
+    pin:
+      number: GPIO38
+      mode: INPUT_PULLUP
+    internal: true

@@ -1,0 +1,105 @@
+globals:
+  - id: !extend voice_assistant_phase
+    initial_value: ${voice_assist_not_ready_phase_id} # used to make the leds not blink when the va component is not loaded
+
+api:
+  services:
+    - service: start_va
+      then:
+        - voice_assistant.start
+    - service: stop_va
+      then:
+        - voice_assistant.stop
+
+voice_assistant:
+  id: va
+  microphone: onju_microphone
+  use_wake_word: false
+  # TODO
+  on_listening:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_waiting_for_command_phase_id};
+    - script.execute: control_led
+  on_stt_vad_start:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_listening_for_command_phase_id};
+    - script.execute: control_led
+  on_stt_vad_end:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_thinking_phase_id};
+    - script.execute: control_led
+  on_tts_start:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_replying_phase_id};
+    - script.execute: control_led
+  on_end:
+    - wait_until:
+        not:
+          voice_assistant.is_running:
+    # If the end happened because of an error, let the error phase on for a second
+    - if:
+        condition:
+          lambda: return id(voice_assistant_phase) == ${voice_assist_error_phase_id};
+        then:
+          - delay: 1s
+    # Reset the voice assistant phase id and reset the LED animations.
+    - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
+    - script.execute: control_led
+  on_client_connected:
+    - lambda: id(init_in_progress) = false;
+    - lambda: id(voice_assistant_phase) = ${voice_assist_idle_phase_id};
+    - script.execute: control_led
+  on_client_disconnected:
+    - voice_assistant.stop:
+    - lambda: id(voice_assistant_phase) = ${voice_assist_not_ready_phase_id};
+    - script.execute: control_led
+  on_error:
+    - if:
+        condition:
+          and:
+            - lambda: return !id(init_in_progress);
+            - lambda: return code != "duplicate_wake_up_detected";
+        then:
+          - lambda: id(voice_assistant_phase) = ${voice_assist_error_phase_id};
+          - script.execute: control_led
+
+script:
+  - id: turn_on_wake_word
+    then: []
+  - id: turn_off_wake_word
+    then: []
+
+binary_sensor:
+  - id: !extend hardware_mute_switch
+    on_press:
+      - switch.template.publish:
+          id: mute_switch
+          state: ON
+    on_release:
+      - switch.template.publish:
+          id: mute_switch
+          state: OFF
+
+switch:
+  - id: mute_switch
+    platform: template
+    name: Mute
+    restore_mode: RESTORE_DEFAULT_OFF
+    icon: "mdi:microphone-off"
+    entity_category: config
+    turn_on_action:
+      - if:
+          condition:
+            binary_sensor.is_off: hardware_mute_switch
+          then:
+            - switch.template.publish:
+                id: mute_switch
+                state: ON
+    turn_off_action:
+      - if:
+          condition:
+            binary_sensor.is_off: hardware_mute_switch
+          then:
+            - switch.template.publish:
+                id: mute_switch
+                state: OFF
+    on_turn_on:
+      - script.execute: control_led
+    on_turn_off:
+      - script.execute: control_led
