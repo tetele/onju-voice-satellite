@@ -12,7 +12,7 @@ packages:
   # audio_gnumpi: !include onju-modules/audio-gnumpi.yaml
   audio_nabu: !include onju-modules/audio-nabu.yaml
   # onju_va_mww: !include onju-modules/micro_wake_word.yaml
-  va_nabu: !include onju-modules/voice_assistant-nabu.yaml
+  onju_mww_nabu: !include onju-modules/micro_wake_word-nabu.yaml
 
 # TEMP https://discord.com/channels/429907082951524364/1324733194980950106
 esp32:

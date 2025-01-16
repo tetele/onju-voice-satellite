@@ -55,7 +55,7 @@ microphone:
       id: onju_microphone
       amplify_shift: 2
     channel_1:
-      id: comm_mic
+      id: mww_microphone
       amplify_shift: 2
 
 media_player:
